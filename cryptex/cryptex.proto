@@ -10,11 +10,13 @@ option (gogoproto.unmarshaler_all) = true;
 option (gogoproto.sizer_all) = true;
 
 import "cryptex/sss.proto";
+import "cryptex/xor.proto";
 
 message Envelope {
   option (gogoproto.onlyone) = true;
 
   oneof cryptex {
     cryptex.SSS sss = 1 [(gogoproto.customname) = "SSS"];
+    cryptex.XOR xor = 2 [(gogoproto.customname) = "XOR"];
   }
 }
