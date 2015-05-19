@@ -13,6 +13,7 @@ import "cryptex/sss.proto";
 import "cryptex/xor.proto";
 import "cryptex/secretbox.proto";
 import "cryptex/box.proto";
+import "cryptex/rsa.proto";
 
 message Envelope {
   option (gogoproto.onlyone) = true;
@@ -22,5 +23,6 @@ message Envelope {
     cryptex.XOR xor = 2 [(gogoproto.customname) = "XOR"];
     cryptex.SecretBox secretbox = 3 [(gogoproto.customname) = "SecretBox"];
     cryptex.Box box = 4;
+    cryptex.RSA rsa = 5 [(gogoproto.customname) = "RSA"];
   }
 }

@@ -11,6 +11,7 @@
 		cryptex/xor.proto
 		cryptex/secretbox.proto
 		cryptex/box.proto
+		cryptex/rsa.proto
 
 	It has these top-level messages:
 		Envelope
@@ -32,6 +33,7 @@ type Envelope struct {
 	XOR       *XOR       `protobuf:"bytes,2,opt,name=xor" json:"xor,omitempty"`
 	SecretBox *SecretBox `protobuf:"bytes,3,opt,name=secretbox" json:"secretbox,omitempty"`
 	Box       *Box       `protobuf:"bytes,4,opt,name=box" json:"box,omitempty"`
+	RSA       *RSA       `protobuf:"bytes,5,opt,name=rsa" json:"rsa,omitempty"`
 }
 
 func (m *Envelope) Reset()         { *m = Envelope{} }
@@ -62,6 +64,13 @@ func (m *Envelope) GetSecretBox() *SecretBox {
 func (m *Envelope) GetBox() *Box {
 	if m != nil {
 		return m.Box
+	}
+	return nil
+}
+
+func (m *Envelope) GetRSA() *RSA {
+	if m != nil {
+		return m.RSA
 	}
 	return nil
 }
@@ -121,6 +130,16 @@ func (m *Envelope) MarshalTo(data []byte) (int, error) {
 		}
 		i += n4
 	}
+	if m.RSA != nil {
+		data[i] = 0x2a
+		i++
+		i = encodeVarintCryptex(data, i, uint64(m.RSA.Size()))
+		n5, err := m.RSA.MarshalTo(data[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n5
+	}
 	return i, nil
 }
 
@@ -170,6 +189,10 @@ func (m *Envelope) Size() (n int) {
 		l = m.Box.Size()
 		n += 1 + l + sovCryptex(uint64(l))
 	}
+	if m.RSA != nil {
+		l = m.RSA.Size()
+		n += 1 + l + sovCryptex(uint64(l))
+	}
 	return n
 }
 
@@ -199,6 +222,9 @@ func (this *Envelope) GetValue() interface{} {
 	if this.Box != nil {
 		return this.Box
 	}
+	if this.RSA != nil {
+		return this.RSA
+	}
 	return nil
 }
 
@@ -212,6 +238,8 @@ func (this *Envelope) SetValue(value interface{}) bool {
 		this.SecretBox = vt
 	case *Box:
 		this.Box = vt
+	case *RSA:
+		this.RSA = vt
 	default:
 		return false
 	}
@@ -353,6 +381,36 @@ func (m *Envelope) Unmarshal(data []byte) error {
 				m.Box = &Box{}
 			}
 			if err := m.Box.Unmarshal(data[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field RSA", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := data[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			postIndex := iNdEx + msglen
+			if msglen < 0 {
+				return ErrInvalidLengthCryptex
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.RSA == nil {
+				m.RSA = &RSA{}
+			}
+			if err := m.RSA.Unmarshal(data[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
