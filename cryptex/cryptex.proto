@@ -11,6 +11,7 @@ option (gogoproto.sizer_all) = true;
 
 import "cryptex/sss.proto";
 import "cryptex/xor.proto";
+import "cryptex/secretbox.proto";
 
 message Envelope {
   option (gogoproto.onlyone) = true;
@@ -18,5 +19,6 @@ message Envelope {
   oneof cryptex {
     cryptex.SSS sss = 1 [(gogoproto.customname) = "SSS"];
     cryptex.XOR xor = 2 [(gogoproto.customname) = "XOR"];
+    cryptex.SecretBox secretbox = 3 [(gogoproto.customname) = "SecretBox"];
   }
 }
