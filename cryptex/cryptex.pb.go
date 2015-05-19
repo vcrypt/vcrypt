@@ -10,6 +10,7 @@
 		cryptex/sss.proto
 		cryptex/xor.proto
 		cryptex/secretbox.proto
+		cryptex/box.proto
 
 	It has these top-level messages:
 		Envelope
@@ -30,6 +31,7 @@ type Envelope struct {
 	SSS       *SSS       `protobuf:"bytes,1,opt,name=sss" json:"sss,omitempty"`
 	XOR       *XOR       `protobuf:"bytes,2,opt,name=xor" json:"xor,omitempty"`
 	SecretBox *SecretBox `protobuf:"bytes,3,opt,name=secretbox" json:"secretbox,omitempty"`
+	Box       *Box       `protobuf:"bytes,4,opt,name=box" json:"box,omitempty"`
 }
 
 func (m *Envelope) Reset()         { *m = Envelope{} }
@@ -53,6 +55,13 @@ func (m *Envelope) GetXOR() *XOR {
 func (m *Envelope) GetSecretBox() *SecretBox {
 	if m != nil {
 		return m.SecretBox
+	}
+	return nil
+}
+
+func (m *Envelope) GetBox() *Box {
+	if m != nil {
+		return m.Box
 	}
 	return nil
 }
@@ -102,6 +111,16 @@ func (m *Envelope) MarshalTo(data []byte) (int, error) {
 		}
 		i += n3
 	}
+	if m.Box != nil {
+		data[i] = 0x22
+		i++
+		i = encodeVarintCryptex(data, i, uint64(m.Box.Size()))
+		n4, err := m.Box.MarshalTo(data[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n4
+	}
 	return i, nil
 }
 
@@ -147,6 +166,10 @@ func (m *Envelope) Size() (n int) {
 		l = m.SecretBox.Size()
 		n += 1 + l + sovCryptex(uint64(l))
 	}
+	if m.Box != nil {
+		l = m.Box.Size()
+		n += 1 + l + sovCryptex(uint64(l))
+	}
 	return n
 }
 
@@ -173,6 +196,9 @@ func (this *Envelope) GetValue() interface{} {
 	if this.SecretBox != nil {
 		return this.SecretBox
 	}
+	if this.Box != nil {
+		return this.Box
+	}
 	return nil
 }
 
@@ -184,6 +210,8 @@ func (this *Envelope) SetValue(value interface{}) bool {
 		this.XOR = vt
 	case *SecretBox:
 		this.SecretBox = vt
+	case *Box:
+		this.Box = vt
 	default:
 		return false
 	}
@@ -295,6 +323,36 @@ func (m *Envelope) Unmarshal(data []byte) error {
 				m.SecretBox = &SecretBox{}
 			}
 			if err := m.SecretBox.Unmarshal(data[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Box", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := data[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			postIndex := iNdEx + msglen
+			if msglen < 0 {
+				return ErrInvalidLengthCryptex
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Box == nil {
+				m.Box = &Box{}
+			}
+			if err := m.Box.Unmarshal(data[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
