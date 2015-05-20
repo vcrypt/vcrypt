@@ -12,6 +12,7 @@
 		cryptex/secretbox.proto
 		cryptex/box.proto
 		cryptex/rsa.proto
+		cryptex/openpgp.proto
 
 	It has these top-level messages:
 		Envelope
@@ -34,6 +35,7 @@ type Envelope struct {
 	SecretBox *SecretBox `protobuf:"bytes,3,opt,name=secretbox" json:"secretbox,omitempty"`
 	Box       *Box       `protobuf:"bytes,4,opt,name=box" json:"box,omitempty"`
 	RSA       *RSA       `protobuf:"bytes,5,opt,name=rsa" json:"rsa,omitempty"`
+	OpenPGP   *OpenPGP   `protobuf:"bytes,6,opt,name=openpgp" json:"openpgp,omitempty"`
 }
 
 func (m *Envelope) Reset()         { *m = Envelope{} }
@@ -71,6 +73,13 @@ func (m *Envelope) GetBox() *Box {
 func (m *Envelope) GetRSA() *RSA {
 	if m != nil {
 		return m.RSA
+	}
+	return nil
+}
+
+func (m *Envelope) GetOpenPGP() *OpenPGP {
+	if m != nil {
+		return m.OpenPGP
 	}
 	return nil
 }
@@ -140,6 +149,16 @@ func (m *Envelope) MarshalTo(data []byte) (int, error) {
 		}
 		i += n5
 	}
+	if m.OpenPGP != nil {
+		data[i] = 0x32
+		i++
+		i = encodeVarintCryptex(data, i, uint64(m.OpenPGP.Size()))
+		n6, err := m.OpenPGP.MarshalTo(data[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n6
+	}
 	return i, nil
 }
 
@@ -193,6 +212,10 @@ func (m *Envelope) Size() (n int) {
 		l = m.RSA.Size()
 		n += 1 + l + sovCryptex(uint64(l))
 	}
+	if m.OpenPGP != nil {
+		l = m.OpenPGP.Size()
+		n += 1 + l + sovCryptex(uint64(l))
+	}
 	return n
 }
 
@@ -225,6 +248,9 @@ func (this *Envelope) GetValue() interface{} {
 	if this.RSA != nil {
 		return this.RSA
 	}
+	if this.OpenPGP != nil {
+		return this.OpenPGP
+	}
 	return nil
 }
 
@@ -240,6 +266,8 @@ func (this *Envelope) SetValue(value interface{}) bool {
 		this.Box = vt
 	case *RSA:
 		this.RSA = vt
+	case *OpenPGP:
+		this.OpenPGP = vt
 	default:
 		return false
 	}
@@ -411,6 +439,36 @@ func (m *Envelope) Unmarshal(data []byte) error {
 				m.RSA = &RSA{}
 			}
 			if err := m.RSA.Unmarshal(data[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field OpenPGP", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := data[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			postIndex := iNdEx + msglen
+			if msglen < 0 {
+				return ErrInvalidLengthCryptex
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.OpenPGP == nil {
+				m.OpenPGP = &OpenPGP{}
+			}
+			if err := m.OpenPGP.Unmarshal(data[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
