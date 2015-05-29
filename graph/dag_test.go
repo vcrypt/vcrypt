@@ -11,7 +11,9 @@ func TestDAG(t *testing.T) {
 		Root      string
 		Adjacency map[string][]string
 
-		OrderRDFS []string
+		Err string // expected build error
+
+		OrderRDFS []string // expected ReverseDFS order
 	}{
 		// chain:  A -> B -> C -> D -> E -> F
 		{
@@ -53,10 +55,45 @@ func TestDAG(t *testing.T) {
 			},
 			OrderRDFS: []string{"D", "E", "B", "F", "G", "C", "A"},
 		},
+		// cycle error:  A <-> B
+		{
+			Root: "A",
+			Adjacency: map[string][]string{
+				"A": []string{"B"},
+				"B": []string{"A"},
+			},
+			Err: "cycle detected",
+		},
+		// deep cycle:  A -> B -> C  -> E -> F ------> H
+		//                     \      |        |     |
+		//                      -> D -/        -> G -/
+		//                      \                 |
+		//                       \--<-----<----<--/
+		{
+			Root: "A",
+			Adjacency: map[string][]string{
+				"A": []string{"B"},
+				"B": []string{"C", "D"},
+				"C": []string{"E"},
+				"D": []string{"E"},
+				"E": []string{"F"},
+				"F": []string{"G", "H"},
+				"G": []string{"D", "H"},
+			},
+			Err: "cycle detected", // D -> E -> F -> G -> D
+		},
 	}
 
 	for _, test := range tests {
 		dag, err := testDAG(test.Root, test.Adjacency)
+		if test.Err != "" {
+			if err == nil {
+				t.Errorf("missing error %q", test.Err)
+			} else if err.Error() != test.Err {
+				t.Error(err)
+			}
+			continue
+		}
 		if err != nil {
 			t.Error(err)
 			continue
