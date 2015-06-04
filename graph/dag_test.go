@@ -1,7 +1,6 @@
 package graph
 
 import (
-	"container/list"
 	"reflect"
 	"testing"
 )
@@ -100,8 +99,8 @@ func TestDAG(t *testing.T) {
 		}
 
 		gotRDFS := []string{}
-		dag.ReverseDFS(func(v interface{}) error {
-			gotRDFS = append(gotRDFS, v.(string))
+		dag.ReverseDFS(func(v *Vertex) error {
+			gotRDFS = append(gotRDFS, v.Value.(string))
 			return nil
 		})
 
@@ -112,26 +111,26 @@ func TestDAG(t *testing.T) {
 
 }
 
-func testList(keys ...string) *list.List {
-	l := list.New()
-	return l
-}
-
 func testDAG(root string, adjacency map[string][]string) (*DAG, error) {
 	dag := NewDAG(root)
-	return dag, buildDAG(dag, root, adjacency)
+	return dag, buildDAG(dag, dag.Root, adjacency)
 }
 
-func buildDAG(dag *DAG, from string, adjacency map[string][]string) error {
-	for _, to := range adjacency[from] {
+func buildDAG(dag *DAG, from *Vertex, adjacency map[string][]string) error {
+	for _, v := range adjacency[from.Value.(string)] {
+		to, ok := dag.Get(v)
+		if !ok {
+			to = dag.Add(v)
+		}
+
 		if err := dag.AddEdge(to, from); err != nil {
 			return err
 		}
-	}
 
-	for _, to := range adjacency[from] {
-		if err := buildDAG(dag, to, adjacency); err != nil {
-			return err
+		if !ok {
+			if err := buildDAG(dag, to, adjacency); err != nil {
+				return err
+			}
 		}
 	}
 

@@ -5,41 +5,64 @@ import (
 	"errors"
 )
 
+// Vertex is a vertex for DAG.
+type Vertex struct {
+	Value interface{}
+}
+
 // DAG is a Directed Acyclic Graph implemented with an adjacency list.
 type DAG struct {
-	Root      interface{}
-	Adjacency map[interface{}]*list.List
+	Root      *Vertex
+	Adjacency map[*Vertex]*list.List
 }
 
 // NewDAG constructs a new graph with a single root vertex.
-func NewDAG(root interface{}) *DAG {
+func NewDAG(v interface{}) *DAG {
+	root := &Vertex{Value: v}
 	return &DAG{
 		Root:      root,
-		Adjacency: map[interface{}]*list.List{root: list.New()},
+		Adjacency: map[*Vertex]*list.List{root: list.New()},
 	}
 }
 
+// Add inserts a vertex holding a value v in the graph.
+func (g *DAG) Add(v interface{}) *Vertex {
+	vert := &Vertex{Value: v}
+	g.Adjacency[vert] = list.New()
+	return vert
+}
+
+// Get returns the vertex for the corresponding value.
+func (g *DAG) Get(v interface{}) (*Vertex, bool) {
+	for vert := range g.Adjacency {
+		if v == vert.Value {
+			return vert, true
+		}
+	}
+	return nil, false
+}
+
 // AddEdge inserts an directed edge between two vertecies.
-func (g *DAG) AddEdge(to, from interface{}) error {
+func (g *DAG) AddEdge(to, from *Vertex) error {
 	if _, ok := g.Adjacency[to]; !ok {
-		g.Adjacency[to] = list.New()
+		return errors.New("to vertex not found")
 	}
 
 	l, ok := g.Adjacency[from]
 	if !ok {
 		return errors.New("from vertex not found")
 	}
-	l.PushBack(to)
 
+	l.PushBack(to)
 	return g.cyclicCheck()
 }
 
 func (g *DAG) cyclicCheck() error {
-	visited := make(map[interface{}]bool, len(g.Adjacency))
-	visiting := make(map[interface{}]bool, len(g.Adjacency))
+	visited := make(map[*Vertex]bool, len(g.Adjacency))
+	visiting := make(map[*Vertex]bool, len(g.Adjacency))
 
 	var walker WalkFunc
-	walker = func(v interface{}) error {
+	walker = func(v *Vertex) error {
 		if visited[v] {
 			return nil
 		}
@@ -61,12 +84,12 @@ func (g *DAG) cyclicCheck() error {
 }
 
 // WalkFunc is a common func for all graph walking methods.
-type WalkFunc func(interface{}) error
+type WalkFunc func(*Vertex) error
 
-func (g *DAG) walk(v interface{}, fn WalkFunc) error {
+func (g *DAG) walk(v *Vertex, fn WalkFunc) error {
 	if edges := g.Adjacency[v]; edges != nil {
 		for e := edges.Front(); e != nil; e = e.Next() {
-			if err := fn(e.Value); err != nil {
+			if err := fn(e.Value.(*Vertex)); err != nil {
 				return err
 			}
 		}
@@ -76,21 +99,21 @@ func (g *DAG) walk(v interface{}, fn WalkFunc) error {
 
 // ReverseDFS walks the graph in reverse depth-first order.
 func (g *DAG) ReverseDFS(fn WalkFunc) error {
-	return g.rdfs(g.Root, make(map[interface{}]bool, len(g.Adjacency)), fn)
+	return g.rdfs(g.Root, make(map[*Vertex]bool, len(g.Adjacency)), fn)
 }
 
-func (g *DAG) rdfs(e interface{}, visited map[interface{}]bool, fn WalkFunc) error {
-	visited[e] = true
+func (g *DAG) rdfs(v *Vertex, visited map[*Vertex]bool, fn WalkFunc) error {
+	visited[v] = true
 
-	walker := func(we interface{}) error {
-		if visited[we] {
+	walker := func(v *Vertex) error {
+		if visited[v] {
 			return nil
 		}
-		return g.rdfs(we, visited, fn)
+		return g.rdfs(v, visited, fn)
 	}
 
-	if err := g.walk(e, walker); err != nil {
+	if err := g.walk(v, walker); err != nil {
 		return err
 	}
-	return fn(e)
+	return fn(v)
 }
