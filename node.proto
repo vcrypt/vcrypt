@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package vcrypt;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.goproto_enum_prefix_all) = false;
+option (gogoproto.goproto_getters_all) = false;
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+option (gogoproto.sizer_all) = true;
+
+import "github.com/benburkert/vcrypt/cryptex/cryptex.proto";
+import "github.com/benburkert/vcrypt/secret/secret.proto";
+
+import "marker.proto";
+
+message Node {
+  option (gogoproto.onlyone) = true;
+
+  bytes nonce = 1;
+  repeated bytes inputs = 2;
+
+  oneof node {
+    cryptex.Envelope cryptex = 3 [(gogoproto.customname) = "cryptex"];
+    secret.Envelope secret = 4 [(gogoproto.customname) = "secret"];
+    Marker marker = 5;
+  }
+}
