@@ -97,6 +97,28 @@ func (g *DAG) walk(v *Vertex, fn WalkFunc) error {
 	return nil
 }
 
+// BFS walks the graph in breadth-first order.
+func (g *DAG) BFS(fn WalkFunc) error {
+	l := list.New()
+	l.PushBack(g.Root)
+
+	visited := map[*Vertex]bool{}
+	for e := l.Front(); e != nil; e = e.Next() {
+		v := e.Value.(*Vertex)
+		if visited[v] {
+			continue
+		}
+
+		if err := fn(v); err != nil {
+			return err
+		}
+		visited[v] = true
+
+		l.PushBackList(g.Adjacency[v])
+	}
+	return nil
+}
+
 // ReverseDFS walks the graph in reverse depth-first order.
 func (g *DAG) ReverseDFS(fn WalkFunc) error {
 	return g.rdfs(g.Root, make(map[*Vertex]bool, len(g.Adjacency)), fn)

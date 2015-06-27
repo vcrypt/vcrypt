@@ -12,6 +12,7 @@ func TestDAG(t *testing.T) {
 
 		Err string // expected build error
 
+		OrderBFS  []string // expected BFS order
 		OrderRDFS []string // expected ReverseDFS order
 	}{
 		// chain:  A -> B -> C -> D -> E -> F
@@ -24,6 +25,7 @@ func TestDAG(t *testing.T) {
 				"D": []string{"E"},
 				"E": []string{"F"},
 			},
+			OrderBFS:  []string{"A", "B", "C", "D", "E", "F"},
 			OrderRDFS: []string{"F", "E", "D", "C", "B", "A"},
 		},
 		// diamond:  A -> B ->-
@@ -36,6 +38,7 @@ func TestDAG(t *testing.T) {
 				"B": []string{"D"},
 				"C": []string{"D"},
 			},
+			OrderBFS:  []string{"A", "B", "C", "D"},
 			OrderRDFS: []string{"D", "B", "C", "A"},
 		},
 		// binary tree:  A -> B -> D
@@ -52,6 +55,7 @@ func TestDAG(t *testing.T) {
 				"B": []string{"D", "E"},
 				"C": []string{"F", "G"},
 			},
+			OrderBFS:  []string{"A", "B", "C", "D", "E", "F", "G"},
 			OrderRDFS: []string{"D", "E", "B", "F", "G", "C", "A"},
 		},
 		// cycle error:  A <-> B
@@ -106,6 +110,16 @@ func TestDAG(t *testing.T) {
 
 		if !reflect.DeepEqual(gotRDFS, test.OrderRDFS) {
 			t.Errorf("want ReverseRDFS order %v, got %v", test.OrderRDFS, gotRDFS)
+		}
+
+		gotBFS := []string{}
+		dag.BFS(func(v *Vertex) error {
+			gotBFS = append(gotBFS, v.Value.(string))
+			return nil
+		})
+
+		if !reflect.DeepEqual(gotBFS, test.OrderBFS) {
+			t.Errorf("want BFS order %v, got %v", test.OrderBFS, gotBFS)
 		}
 	}
 
