@@ -108,6 +108,11 @@ func (p *Plan) Digest() ([]byte, error) {
 	return hash.Sum(nil), nil
 }
 
+// Graph returns a new Graph built from the plan nodes.
+func (p *Plan) Graph() (*Graph, error) {
+	return BuildGraph(p.Nodes)
+}
+
 // Seals return a Seal slice for the Plan.
 func (p *Plan) Seals() ([]seal.Seal, error) {
 	seals := make([]seal.Seal, 0, len(p.seals))

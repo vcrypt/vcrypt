@@ -31,6 +31,88 @@ func NewGraph(cptx cryptex.Cryptex) (*Graph, error) {
 	}, nil
 }
 
+// BuildGraph constructs a graph from a slice of Nodes.
+func BuildGraph(nodes []*Node) (*Graph, error) {
+	cptx, err := nodes[0].Cryptex()
+	if err != nil {
+		return nil, err
+	}
+	if cptx == nil {
+		return nil, errors.New("root node is non cryptex")
+	}
+
+	g, err := NewGraph(cptx)
+	if err != nil {
+		return nil, err
+	}
+
+	fp, err := nodes[0].Digest()
+	if err != nil {
+		return nil, err
+	}
+
+	g.digests[g.Root] = fp
+	g.nonces[g.Root] = nodes[0].Nonce
+
+	vertMap := map[string]*graph.Vertex{
+		string(fp): g.Root,
+	}
+
+	// insert verts
+	for _, node := range nodes[1:] {
+		var val interface{}
+		switch node.Type() {
+		case CryptexNode:
+			cptx, err := node.Cryptex()
+			if err != nil {
+				return nil, err
+			}
+			if val, err = cryptex.Wrap(cptx); err != nil {
+				return nil, err
+			}
+		case SecretNode:
+			sec, err := node.Secret()
+			if err != nil {
+				return nil, err
+			}
+			if val, err = secret.Wrap(sec); err != nil {
+				return nil, err
+			}
+		case MarkerNode:
+			val = node.Marker
+		default:
+			panic("unreachable")
+		}
+
+		v := g.DAG.Add(val)
+		fp, err := node.Digest()
+		if err != nil {
+			return nil, err
+		}
+
+		g.digests[v] = fp
+		g.nonces[v] = node.Nonce
+		vertMap[string(fp)] = v
+	}
+
+	// add edges
+	for _, node := range nodes {
+		fromfp, err := node.Digest()
+		if err != nil {
+			return nil, err
+		}
+
+		for _, tofp := range node.Inputs {
+			to, from := vertMap[string(tofp)], vertMap[string(fromfp)]
+			if err := g.AddEdge(to, from); err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	return g, nil
+}
+
 // Add inserts a new Node into the graph with a parent edge from the vertex.
 func (g *Graph) Add(val interface{}, from *graph.Vertex) (*graph.Vertex, error) {
 	to := g.DAG.Add(val)
