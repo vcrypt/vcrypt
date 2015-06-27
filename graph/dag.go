@@ -119,6 +119,32 @@ func (g *DAG) BFS(fn WalkFunc) error {
 	return nil
 }
 
+// DFS walks the graph in depth-first order.
+func (g *DAG) DFS(fn WalkFunc) error {
+	return g.dfs(g.Root, make(map[*Vertex]bool, len(g.Adjacency)), fn)
+}
+
+func (g *DAG) dfs(v *Vertex, visited map[*Vertex]bool, fn WalkFunc) error {
+	if visited[v] {
+		return nil
+	}
+
+	if err := fn(v); err != nil {
+		return err
+	}
+
+	visited[v] = true
+
+	walker := func(v *Vertex) error {
+		if visited[v] {
+			return nil
+		}
+		return g.dfs(v, visited, fn)
+	}
+
+	return g.walk(v, walker)
+}
+
 // ReverseDFS walks the graph in reverse depth-first order.
 func (g *DAG) ReverseDFS(fn WalkFunc) error {
 	return g.rdfs(g.Root, make(map[*Vertex]bool, len(g.Adjacency)), fn)
