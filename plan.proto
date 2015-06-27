@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package vcrypt;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.goproto_enum_prefix_all) = false;
+option (gogoproto.goproto_getters_all) = false;
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+option (gogoproto.sizer_all) = true;
+
+import "github.com/benburkert/vcrypt/seal/seal.proto";
+
+import "node.proto";
+
+message Plan {
+  bytes nonce = 1;
+  string comment = 2 [(gogoproto.customname) = "comment"];
+  repeated vcrypt.Node nodes = 3;
+  repeated seal.Envelope seals = 4 [(gogoproto.customname) = "seals"];
+}

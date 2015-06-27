@@ -8,6 +8,7 @@ Package vcrypt is a generated protocol buffer package.
 It is generated from these files:
 	marker.proto
 	node.proto
+	plan.proto
 
 It has these top-level messages:
 	Marker
