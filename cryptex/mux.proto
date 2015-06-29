@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package cryptex;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+option (gogoproto.sizer_all) = true;
+
+message Mux {
+  string comment = 1 [(gogoproto.customname) = "comment"];
+  bytes seed = 2;
+}

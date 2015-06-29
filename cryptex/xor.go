@@ -36,10 +36,7 @@ func (c *XOR) Close(inputs, secrets [][]byte) error {
 			return err
 		}
 		inputs[idx] = input
-
-		for j := range input {
-			buf[j] = buf[j] ^ input[j]
-		}
+		xorMask(buf, buf, input)
 	}
 
 	inputs[0] = buf
@@ -59,9 +56,7 @@ func (c *XOR) Open(secrets, inputs [][]byte) error {
 	copy(buf, inputs[0])
 
 	for _, input := range inputs[1:] {
-		for i := range input {
-			buf[i] = buf[i] ^ input[i]
-		}
+		xorMask(buf, buf, input)
 	}
 
 	secrets[0] = buf

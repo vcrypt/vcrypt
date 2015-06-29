@@ -13,6 +13,7 @@
 		cryptex/box.proto
 		cryptex/rsa.proto
 		cryptex/openpgp.proto
+		cryptex/mux.proto
 
 	It has these top-level messages:
 		Envelope
@@ -36,6 +37,7 @@ type Envelope struct {
 	Box       *Box       `protobuf:"bytes,4,opt,name=box" json:"box,omitempty"`
 	RSA       *RSA       `protobuf:"bytes,5,opt,name=rsa" json:"rsa,omitempty"`
 	OpenPGP   *OpenPGP   `protobuf:"bytes,6,opt,name=openpgp" json:"openpgp,omitempty"`
+	Mux       *Mux       `protobuf:"bytes,7,opt,name=mux" json:"mux,omitempty"`
 }
 
 func (m *Envelope) Reset()         { *m = Envelope{} }
@@ -80,6 +82,13 @@ func (m *Envelope) GetRSA() *RSA {
 func (m *Envelope) GetOpenPGP() *OpenPGP {
 	if m != nil {
 		return m.OpenPGP
+	}
+	return nil
+}
+
+func (m *Envelope) GetMux() *Mux {
+	if m != nil {
+		return m.Mux
 	}
 	return nil
 }
@@ -159,6 +168,16 @@ func (m *Envelope) MarshalTo(data []byte) (int, error) {
 		}
 		i += n6
 	}
+	if m.Mux != nil {
+		data[i] = 0x3a
+		i++
+		i = encodeVarintCryptex(data, i, uint64(m.Mux.Size()))
+		n7, err := m.Mux.MarshalTo(data[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n7
+	}
 	return i, nil
 }
 
@@ -216,6 +235,10 @@ func (m *Envelope) Size() (n int) {
 		l = m.OpenPGP.Size()
 		n += 1 + l + sovCryptex(uint64(l))
 	}
+	if m.Mux != nil {
+		l = m.Mux.Size()
+		n += 1 + l + sovCryptex(uint64(l))
+	}
 	return n
 }
 
@@ -251,6 +274,9 @@ func (this *Envelope) GetValue() interface{} {
 	if this.OpenPGP != nil {
 		return this.OpenPGP
 	}
+	if this.Mux != nil {
+		return this.Mux
+	}
 	return nil
 }
 
@@ -268,6 +294,8 @@ func (this *Envelope) SetValue(value interface{}) bool {
 		this.RSA = vt
 	case *OpenPGP:
 		this.OpenPGP = vt
+	case *Mux:
+		this.Mux = vt
 	default:
 		return false
 	}
@@ -469,6 +497,36 @@ func (m *Envelope) Unmarshal(data []byte) error {
 				m.OpenPGP = &OpenPGP{}
 			}
 			if err := m.OpenPGP.Unmarshal(data[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Mux", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := data[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			postIndex := iNdEx + msglen
+			if msglen < 0 {
+				return ErrInvalidLengthCryptex
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Mux == nil {
+				m.Mux = &Mux{}
+			}
+			if err := m.Mux.Unmarshal(data[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
