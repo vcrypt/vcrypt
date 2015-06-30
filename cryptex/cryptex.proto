@@ -16,6 +16,7 @@ import "cryptex/box.proto";
 import "cryptex/rsa.proto";
 import "cryptex/openpgp.proto";
 import "cryptex/mux.proto";
+import "cryptex/demux.proto";
 
 message Envelope {
   option (gogoproto.onlyone) = true;
@@ -28,5 +29,6 @@ message Envelope {
     cryptex.RSA rsa = 5 [(gogoproto.customname) = "RSA"];
     cryptex.OpenPGP openpgp = 6 [(gogoproto.customname) = "OpenPGP"];
     cryptex.Mux mux = 7;
+    cryptex.Demux demux = 8;
   }
 }
