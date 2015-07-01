@@ -29,6 +29,15 @@ func TestSecretBox(t *testing.T) {
 	if err := cptx.Open(got, inputs); err == nil {
 		t.Errorf("SecretBox cryptex unsealed with bad nonce")
 	}
+
+	pass := []byte("secretbox pass")
+	inputs[0] = pass
+	if err := cptx.Close(inputs, want); err != nil {
+		t.Fatal(err)
+	}
+	if err := cptx.Open(got, [][]byte{pass, inputs[1]}); err != nil {
+		t.Errorf("SecretBox input password ignored")
+	}
 }
 
 func TestRoundTripSecretBox(t *testing.T) {

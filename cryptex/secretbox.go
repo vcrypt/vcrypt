@@ -2,6 +2,7 @@ package cryptex
 
 import (
 	"crypto/rand"
+	"crypto/sha256"
 	"errors"
 
 	"golang.org/x/crypto/nacl/secretbox"
@@ -30,21 +31,26 @@ func (c *SecretBox) Close(inputs, secrets [][]byte) error {
 	}
 
 	secret := secrets[0]
-	nonce, key := [24]byte{}, [32]byte{}
+	nonce := [24]byte{}
 
 	if _, err := rand.Reader.Read(nonce[:]); err != nil {
 		return err
 	}
 
-	if _, err := rand.Reader.Read(key[:]); err != nil {
-		return err
+	pass := inputs[0]
+	if len(pass) == 0 {
+		pass = make([]byte, 32)
+		if _, err := rand.Reader.Read(pass); err != nil {
+			return err
+		}
 	}
+	key := sha256.Sum256(pass)
 
 	out := make([]byte, 24+len(secret)+secretbox.Overhead)
 	copy(out[:24], nonce[:])
 
 	secretbox.Seal(out[24:24], secret, &nonce, &key)
-	inputs[0] = key[:]
+	inputs[0] = pass
 	inputs[1] = out
 	return nil
 }
@@ -58,13 +64,7 @@ func (c *SecretBox) Open(secrets, inputs [][]byte) error {
 		return errors.New("Too many secrets expected")
 	}
 
-	keySlice := inputs[0]
-	if len(keySlice) != 32 {
-		return errors.New("invalid key")
-	}
-	key := [32]byte{}
-	copy(key[:], keySlice)
-
+	key := sha256.Sum256(inputs[0])
 	nbox := inputs[1]
 
 	if len(nbox) < 24+secretbox.Overhead {
