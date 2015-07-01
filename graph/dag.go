@@ -32,6 +32,16 @@ func (g *DAG) Add(v interface{}) *Vertex {
 	return vert
 }
 
+// Edges returns the outgoing edges for v.
+func (g *DAG) Edges(v *Vertex) []*Vertex {
+	vs := make([]*Vertex, 0, g.Adjacency[v].Len())
+	g.walk(v, func(v *Vertex) error {
+		vs = append(vs, v)
+		return nil
+	})
+	return vs
+}
+
 // Get returns the vertex for the corresponding value.
 func (g *DAG) Get(v interface{}) (*Vertex, bool) {
 	for vert := range g.Adjacency {
