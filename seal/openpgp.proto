@@ -4,17 +4,12 @@ package seal;
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
-option (gogoproto.goproto_enum_prefix_all) = false;
 option (gogoproto.marshaler_all) = true;
 option (gogoproto.unmarshaler_all) = true;
 option (gogoproto.sizer_all) = true;
 
-import "seal/openpgp.proto";
-
-message Envelope {
-  option (gogoproto.onlyone) = true;
-
-  oneof seal {
-    seal.OpenPGP openpgp = 1;
-  }
+message OpenPGP {
+  bytes nonce = 1;
+  bytes entity = 2;
+  bytes signature = 3;
 }
