@@ -4,17 +4,11 @@ package payload;
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
-option (gogoproto.goproto_enum_prefix_all) = false;
 option (gogoproto.marshaler_all) = true;
 option (gogoproto.unmarshaler_all) = true;
 option (gogoproto.sizer_all) = true;
 
-import "payload/attached.proto";
-
-message Envelope {
-  option (gogoproto.onlyone) = true;
-
-  oneof payload {
-    Attached attached = 1;
-  }
+message Attached {
+  bytes nonce = 1;
+  bytes data = 2;
 }
