@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package material;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.goproto_enum_prefix_all) = false;
+option (gogoproto.goproto_getters_all) = false;
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+option (gogoproto.sizer_all) = true;
+
+message Material {
+  bytes nonce = 1;
+  string comment = 2 [(gogoproto.customname) = "comment"];
+  bytes id = 3 [(gogoproto.customname) = "ID"];
+  repeated bytes data = 4;
+}
