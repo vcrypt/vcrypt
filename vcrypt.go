@@ -8,7 +8,7 @@ import "github.com/benburkert/vcrypt/seal"
 //go:generate protoc payload/payload.proto payload/attached.proto payload/detached.proto
 //go:generate protoc seal/seal.proto seal/openpgp.proto
 //go:generate protoc secret/secret.proto secret/password.proto secret/openpgpkey.proto
-//go:generate protoc marker.proto node.proto plan.proto
+//go:generate protoc marker.proto node.proto plan.proto vault.proto
 
 // Sealer is an interface for the Seal method.
 type Sealer interface {

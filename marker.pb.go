@@ -9,6 +9,7 @@ It is generated from these files:
 	marker.proto
 	node.proto
 	plan.proto
+	vault.proto
 
 It has these top-level messages:
 	Marker
