@@ -2,18 +2,6 @@
 // source: marker.proto
 // DO NOT EDIT!
 
-/*
-Package vcrypt is a generated protocol buffer package.
-
-It is generated from these files:
-	marker.proto
-	node.proto
-	plan.proto
-	vault.proto
-
-It has these top-level messages:
-	Marker
-*/
 package vcrypt
 
 import proto "github.com/gogo/protobuf/proto"
