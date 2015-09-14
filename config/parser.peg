@@ -1,0 +1,35 @@
+package config
+
+type parser Peg {
+  sections []*section
+
+  curSection *section
+  curKey     string
+}
+
+Grammar <- RootSection? (SpaceComment / Section)+
+
+RootSection <- SpaceComment* ValueLine+
+
+Section <- Space* '[' Space* <Identifier> { p.addSection(text) }
+           (Space+ '"' <QuotedIdentifier> { p.setID(text) } '"')?
+           Space* ']' SpaceComment (ValueLine/ValueMultiLine)*
+
+ValueLine <- Space* <Identifier> { p.setKey(text) }
+             Space* '=' Space* <Value> { p.addValue(text) }
+             SpaceComment
+Value     <- Word (Space+ Word)*
+
+ValueMultiLine <- Space* <Identifier> { p.setKey(text) }
+                  Space* '=' Space* '"'
+                  <[^\"]+> { p.addValue(text) }
+                  '"' SpaceComment
+
+QuotedIdentifier <- [[a-z0-9_\-@. ]]+
+Identifier       <- [[a-z0-9_\-@.]]+
+Word             <- [^ \"\t#\r\n]+
+
+SpaceComment  <- (Space+ / Comment / EndOfLine)
+Comment       <- '#' (!EndOfLine .)* EndOfLine
+Space         <- ' ' / '\t'
+EndOfLine     <- '\r\n' / '\n' / '\r'
