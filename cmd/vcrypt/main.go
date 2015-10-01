@@ -18,6 +18,8 @@ func main() {
 		build(args)
 	case "lock":
 		lock(args)
+	case "unlock":
+		unlock(args)
 	default:
 		help()
 		os.Exit(1)
@@ -31,6 +33,7 @@ func help() {
 		"The vcrypt commands are:",
 		"	build	Build plan file from plan config",
 		"	lock	Encrypt data to a vault",
+		"	unlock	Decrypt data from a vault",
 	}
 
 	fmt.Println(strings.Join(help, "\n"))
