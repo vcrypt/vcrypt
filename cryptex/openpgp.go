@@ -76,12 +76,12 @@ func (c *OpenPGP) Open(secrets, inputs [][]byte) error {
 		return errors.New("Too many secrets expected")
 	}
 
-	ct := bytes.NewReader(inputs[0])
 	keyring, err := openpgp.ReadKeyRing(bytes.NewReader(inputs[1]))
 	if err != nil {
 		return err
 	}
 
+	ct := bytes.NewReader(inputs[0])
 	md, err := openpgp.ReadMessage(ct, keyring, nil, nil)
 	if err != nil {
 		return err
