@@ -8,6 +8,7 @@ import (
 	"io"
 	"io/ioutil"
 
+	"github.com/benburkert/vcrypt/material"
 	"golang.org/x/crypto/nacl/secretbox"
 )
 
@@ -25,7 +26,7 @@ func NewAttached() (*Attached, error) {
 
 // Lock encrypts the data from r using the secretbox encryption scheme from
 // NaCl and returns the secret key.
-func (p *Attached) Lock(r io.Reader) ([]byte, error) {
+func (p *Attached) Lock(r io.Reader, db material.DB) ([]byte, error) {
 	nonce, key := [24]byte{}, [32]byte{}
 	if _, err := io.ReadFull(rand.Reader, nonce[:]); err != nil {
 		return nil, err
@@ -49,7 +50,7 @@ func (p *Attached) Lock(r io.Reader) ([]byte, error) {
 
 // Unlock decrypts ciphertext the from the attached data with the secret key
 // and writes the cleartext to w.
-func (p *Attached) Unlock(w io.Writer, ks []byte) error {
+func (p *Attached) Unlock(w io.Writer, ks []byte, db material.DB) error {
 	nonce, key := [24]byte{}, [32]byte{}
 	copy(nonce[:], p.Data[:24])
 	copy(key[:], ks[:])

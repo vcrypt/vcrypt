@@ -12,7 +12,7 @@ func TestRoundTripAttached(t *testing.T) {
 	}
 
 	wstr := "test data"
-	key, err := want.Lock(bytes.NewBufferString(wstr))
+	key, err := want.Lock(bytes.NewBufferString(wstr), nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -28,7 +28,7 @@ func TestRoundTripAttached(t *testing.T) {
 	}
 
 	gbuf := new(bytes.Buffer)
-	if err := got.Unlock(gbuf, key); err != nil {
+	if err := got.Unlock(gbuf, key, nil); err != nil {
 		t.Fatal(err)
 	}
 

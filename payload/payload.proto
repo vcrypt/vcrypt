@@ -10,11 +10,13 @@ option (gogoproto.unmarshaler_all) = true;
 option (gogoproto.sizer_all) = true;
 
 import "payload/attached.proto";
+import "payload/detached.proto";
 
 message Envelope {
   option (gogoproto.onlyone) = true;
 
   oneof payload {
     Attached attached = 1;
+    Detached detached = 2;
   }
 }

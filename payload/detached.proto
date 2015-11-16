@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package payload;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+option (gogoproto.sizer_all) = true;
+
+message Detached {
+  bytes nonce = 1;
+  bytes digest = 2 [(gogoproto.customname) = "digest"];;
+}
