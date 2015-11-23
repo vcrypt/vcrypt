@@ -7,6 +7,7 @@ import (
 	"io"
 
 	"github.com/benburkert/vcrypt/config"
+	"github.com/benburkert/vcrypt/graph"
 	"github.com/benburkert/vcrypt/seal"
 )
 
@@ -47,6 +48,23 @@ func BuildPlan(r io.Reader) (*Plan, error) {
 // Comment string
 func (p *Plan) Comment() string {
 	return p.comment
+}
+
+// BFS walks the nodes in breadth-first order.
+func (p *Plan) BFS(fn func(*Node) error) error {
+	g, err := p.Graph()
+	if err != nil {
+		return err
+	}
+
+	return g.BFS(func(vrt *graph.Vertex) error {
+		node, err := g.node(vrt)
+		if err != nil {
+			return err
+		}
+
+		return fn(node)
+	})
 }
 
 // AddSeal adds a Seal for the Plan from the nonce, root node, and comment
