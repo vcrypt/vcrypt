@@ -16,6 +16,8 @@ func main() {
 	switch cmd {
 	case "build":
 		build(args)
+	case "inspect":
+		inspect(args)
 	case "lock":
 		lock(args)
 	case "unlock":
@@ -32,6 +34,7 @@ func help() {
 		"",
 		"The vcrypt commands are:",
 		"	build	Build plan file from plan config",
+		"	inspect Show vault, plan, & material info",
 		"	lock	Encrypt data to a vault",
 		"	unlock	Decrypt data from a vault",
 	}
