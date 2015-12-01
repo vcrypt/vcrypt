@@ -42,6 +42,9 @@ type Message interface {
 
 	// Unmarshal parses the Message encoded in data.
 	Unmarshal(data []byte) error
+
+	Comment() string
+	Digest() ([]byte, error)
 }
 
 // Wrap returns an intermediate form of the message for marshalling.
@@ -79,4 +82,16 @@ func Unmarshal(data []byte) (Message, error) {
 	}
 
 	return env.Message()
+}
+
+func (e *Envelope) pemType() (string, error) {
+	switch {
+	case e.Plan != nil:
+		return "VCRYPT PLAN", nil
+	case e.Material != nil:
+		return "VCRYPT MATERIAL", nil
+	case e.Vault != nil:
+		return "VCRYPT VAULT", nil
+	}
+	return "", errors.New("unknown Message type")
 }
