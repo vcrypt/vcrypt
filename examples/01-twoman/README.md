@@ -80,7 +80,8 @@ Check that 'operator 1 key' is solved:
         >   46c5d3f9dc2124d0 [password]   operator B secret
         >   d9b5b171fc03f03e [material]
 
-Export the 'operator 1 key' material and send it to the Console Operator:
+Export the 'operator 1 key' material and send it to the Console Operator (be
+sure to update the id):
 
         vcrypt export -in twoman.vault -db.dir op-A-db -id 14e79e2ea9c2a61f -out op-A.key
 
@@ -101,9 +102,12 @@ Repeat for Operator B:
         >   d9b5b171fc03f03e [material]
         $ vcrypt export -in twoman.vault -db.dir op-B-db -id 14e79e2ea9c2a61f -out op-B.key
 
-As the Console Operator, import `op-A.key` & `op-B.key`, and unlock the vault:
+As the Console Operator, import `op-A.key` & `op-B.key`, and unlock the vault
+(skip the password prompts):
 
         $ vcrypt import -vault twoman.vault -in op-A.key -db.dir console-db
         $ vcrypt import -vault twoman.vault -in op-B.key -db.dir console-db
         $ vcrypt unlock -in twoman.vault -db.dir console-db
+        > password for 'operator A secret':
+        > password for 'operator B secret':
         > 0000

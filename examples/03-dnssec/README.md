@@ -112,21 +112,21 @@ Encrypt `root.key` into `dnssec.vault`:
 As each Officer, unlock & export the key shares:
 
         $ vcrypt unlock -in dnssec.vault -openpgp.dir alice -db.dir alice
-        $ vcrypt export -in dnssec.vault -id b00e404ae1e734c1 -out alice.share -db.dir alice
+        $ vcrypt export -in dnssec.vault -out alice.share -db.dir alice -id b00e404ae1e734c1
 
         $ vcrypt unlock -in dnssec.vault -openpgp.dir bob -db.dir bob
-        $ vcrypt export -in dnssec.vault -id b00e404ae1e734c1 -out bob.share -db.dir bob
+        $ vcrypt export -in dnssec.vault -out bob.share -db.dir bob -id 0183a8fd056f479c
 
         $ vcrypt unlock -in dnssec.vault -openpgp.dir claire -db.dir claire
-        $ vcrypt export -in dnssec.vault -id b00e404ae1e734c1 -out claire.share -db.dir claire
+        $ vcrypt export -in dnssec.vault -out claire.share -db.dir claire -id 3a5141c12d32ba91
 
         $ vcrypt unlock -in dnssec.vault -openpgp.dir david -db.dir david
-        $ vcrypt export -in dnssec.vault -id b00e404ae1e734c1 -out david.share -db.dir david
+        $ vcrypt export -in dnssec.vault -out david.share -db.dir david -id 74b2b57779d8e59d
 
         $ vcrypt unlock -in dnssec.vault -openpgp.dir emily -db.dir emily
-        $ vcrypt export -in dnssec.vault -id b00e404ae1e734c1 -out emily.share -db.dir emily
+        $ vcrypt export -in dnssec.vault -out emily.share -db.dir emily -id fdc4f78ba686a06b
 
-### Part 3 - Import key shares & rebuild `root.key`
+### Part 3 - As the Operator, import key shares & rebuild `root.key`
 
         $ vcrypt import -vault dnssec.vault -in alice.share
         $ vcrypt import -vault dnssec.vault -in bob.share
