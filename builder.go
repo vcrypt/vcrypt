@@ -3,10 +3,10 @@ package vcrypt
 import (
 	"fmt"
 
-	"github.com/benburkert/vcrypt/config"
-	"github.com/benburkert/vcrypt/cryptex"
-	"github.com/benburkert/vcrypt/graph"
-	"github.com/benburkert/vcrypt/secret"
+	"github.com/vcrypt/vcrypt/config"
+	"github.com/vcrypt/vcrypt/cryptex"
+	"github.com/vcrypt/vcrypt/graph"
+	"github.com/vcrypt/vcrypt/secret"
 )
 
 type builder struct {

@@ -7,8 +7,8 @@ package vcrypt
 import proto "github.com/gogo/protobuf/proto"
 
 // discarding unused import gogoproto "github.com/gogo/protobuf/gogoproto"
-import cryptex8 "github.com/benburkert/vcrypt/cryptex"
-import secret2 "github.com/benburkert/vcrypt/secret"
+import cryptex8 "github.com/vcrypt/vcrypt/cryptex"
+import secret2 "github.com/vcrypt/vcrypt/secret"
 
 import io "io"
 import fmt "fmt"

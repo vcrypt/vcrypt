@@ -5,8 +5,8 @@ import (
 	"sort"
 	"testing"
 
-	"github.com/benburkert/vcrypt/config"
-	"github.com/benburkert/vcrypt/internal/test"
+	"github.com/vcrypt/vcrypt/config"
+	"github.com/vcrypt/vcrypt/internal/test"
 )
 
 var (

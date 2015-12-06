@@ -8,8 +8,8 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/benburkert/vcrypt"
-	"github.com/benburkert/vcrypt/material"
+	"github.com/vcrypt/vcrypt"
+	"github.com/vcrypt/vcrypt/material"
 )
 
 var (

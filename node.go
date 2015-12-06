@@ -7,8 +7,8 @@ import (
 	"errors"
 	"io"
 
-	"github.com/benburkert/vcrypt/cryptex"
-	"github.com/benburkert/vcrypt/secret"
+	"github.com/vcrypt/vcrypt/cryptex"
+	"github.com/vcrypt/vcrypt/secret"
 )
 
 // NodeType marks the type of data held by a Node.

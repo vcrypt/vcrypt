@@ -10,9 +10,9 @@ option (gogoproto.marshaler_all) = true;
 option (gogoproto.unmarshaler_all) = true;
 option (gogoproto.sizer_all) = true;
 
-import "github.com/benburkert/vcrypt/material/material.proto";
-import "github.com/benburkert/vcrypt/payload/payload.proto";
-import "github.com/benburkert/vcrypt/seal/seal.proto";
+import "github.com/vcrypt/vcrypt/material/material.proto";
+import "github.com/vcrypt/vcrypt/payload/payload.proto";
+import "github.com/vcrypt/vcrypt/seal/seal.proto";
 
 import "plan.proto";
 

@@ -5,9 +5,9 @@ import (
 	"crypto/rand"
 	"errors"
 
-	"github.com/benburkert/vcrypt/cryptex"
-	"github.com/benburkert/vcrypt/graph"
-	"github.com/benburkert/vcrypt/secret"
+	"github.com/vcrypt/vcrypt/cryptex"
+	"github.com/vcrypt/vcrypt/graph"
+	"github.com/vcrypt/vcrypt/secret"
 )
 
 // Graph encodes an encryption plan into discrete steps represented as Nodes.

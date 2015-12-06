@@ -8,7 +8,7 @@ import (
 	"io"
 	"io/ioutil"
 
-	"github.com/benburkert/vcrypt/material"
+	"github.com/vcrypt/vcrypt/material"
 	"golang.org/x/crypto/nacl/secretbox"
 )
 

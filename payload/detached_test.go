@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/benburkert/vcrypt/material"
+	"github.com/vcrypt/vcrypt/material"
 )
 
 func TestRoundTripDetached(t *testing.T) {

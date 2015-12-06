@@ -20,7 +20,7 @@ package vcrypt
 import proto "github.com/gogo/protobuf/proto"
 
 // discarding unused import gogoproto "github.com/gogo/protobuf/gogoproto"
-import material "github.com/benburkert/vcrypt/material"
+import material "github.com/vcrypt/vcrypt/material"
 
 import io "io"
 import fmt "fmt"

@@ -6,7 +6,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/benburkert/vcrypt"
+	"github.com/vcrypt/vcrypt"
 )
 
 var (

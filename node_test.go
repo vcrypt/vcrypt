@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/benburkert/vcrypt/cryptex"
-	"github.com/benburkert/vcrypt/secret"
+	"github.com/vcrypt/vcrypt/cryptex"
+	"github.com/vcrypt/vcrypt/secret"
 )
 
 func TestNodeDigest(t *testing.T) {

@@ -9,7 +9,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/benburkert/vcrypt"
+	"github.com/vcrypt/vcrypt"
 )
 
 var (

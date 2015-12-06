@@ -6,9 +6,9 @@ import (
 	"crypto/sha256"
 	"io"
 
-	"github.com/benburkert/vcrypt/config"
-	"github.com/benburkert/vcrypt/graph"
-	"github.com/benburkert/vcrypt/seal"
+	"github.com/vcrypt/vcrypt/config"
+	"github.com/vcrypt/vcrypt/graph"
+	"github.com/vcrypt/vcrypt/seal"
 )
 
 // NewPlan constructs a Plan from an pre-built Graph.

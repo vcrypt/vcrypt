@@ -3,7 +3,7 @@ package test
 import (
 	"bytes"
 
-	"github.com/benburkert/vcrypt/seal"
+	"github.com/vcrypt/vcrypt/seal"
 	"golang.org/x/crypto/openpgp"
 )
 

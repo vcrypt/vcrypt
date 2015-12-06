@@ -7,7 +7,7 @@ package vcrypt
 import proto "github.com/gogo/protobuf/proto"
 
 // discarding unused import gogoproto "github.com/gogo/protobuf/gogoproto"
-import seal1 "github.com/benburkert/vcrypt/seal"
+import seal1 "github.com/vcrypt/vcrypt/seal"
 
 import io "io"
 import fmt "fmt"

@@ -4,9 +4,9 @@ import (
 	"bytes"
 	"io"
 
-	"github.com/benburkert/vcrypt/material"
-	"github.com/benburkert/vcrypt/payload"
-	"github.com/benburkert/vcrypt/secret"
+	"github.com/vcrypt/vcrypt/material"
+	"github.com/vcrypt/vcrypt/payload"
+	"github.com/vcrypt/vcrypt/secret"
 )
 
 // Driver is a test implementation of a driver for encryption & decryption.

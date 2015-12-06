@@ -10,7 +10,7 @@ option (gogoproto.marshaler_all) = true;
 option (gogoproto.unmarshaler_all) = true;
 option (gogoproto.sizer_all) = true;
 
-import "github.com/benburkert/vcrypt/seal/seal.proto";
+import "github.com/vcrypt/vcrypt/seal/seal.proto";
 
 import "node.proto";
 

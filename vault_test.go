@@ -6,8 +6,8 @@ import (
 	"io"
 	"testing"
 
-	"github.com/benburkert/vcrypt/internal/test"
-	"github.com/benburkert/vcrypt/secret"
+	"github.com/vcrypt/vcrypt/internal/test"
+	"github.com/vcrypt/vcrypt/secret"
 	"golang.org/x/crypto/openpgp"
 )
 

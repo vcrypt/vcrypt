@@ -4,10 +4,10 @@ import (
 	"errors"
 	"io"
 
-	"github.com/benburkert/vcrypt/material"
-	"github.com/benburkert/vcrypt/payload"
-	"github.com/benburkert/vcrypt/seal"
-	"github.com/benburkert/vcrypt/secret"
+	"github.com/vcrypt/vcrypt/material"
+	"github.com/vcrypt/vcrypt/payload"
+	"github.com/vcrypt/vcrypt/seal"
+	"github.com/vcrypt/vcrypt/secret"
 )
 
 //go:generate -command protoc protoc --proto_path=$GOPATH/src:$GOPATH/src/github.com/gogo/protobuf/protobuf:. --gogo_out=.

@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/benburkert/vcrypt/internal/test"
+	"github.com/vcrypt/vcrypt/internal/test"
 )
 
 func TestParser(t *testing.T) {

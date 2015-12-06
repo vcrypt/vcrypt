@@ -8,10 +8,10 @@ import (
 	"os"
 	"strings"
 
-	"github.com/benburkert/vcrypt"
-	"github.com/benburkert/vcrypt/cryptex"
-	"github.com/benburkert/vcrypt/material"
-	"github.com/benburkert/vcrypt/secret"
+	"github.com/vcrypt/vcrypt"
+	"github.com/vcrypt/vcrypt/cryptex"
+	"github.com/vcrypt/vcrypt/material"
+	"github.com/vcrypt/vcrypt/secret"
 )
 
 var (

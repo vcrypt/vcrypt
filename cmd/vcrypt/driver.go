@@ -5,9 +5,9 @@ import (
 	"io"
 	"os"
 
-	"github.com/benburkert/vcrypt/payload"
-	"github.com/benburkert/vcrypt/secret"
 	"github.com/bgentry/speakeasy"
+	"github.com/vcrypt/vcrypt/payload"
+	"github.com/vcrypt/vcrypt/secret"
 )
 
 // Driver is an implementation of a vcrypt.Driver for use in a terminal.

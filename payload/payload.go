@@ -4,7 +4,7 @@ import (
 	"errors"
 	"io"
 
-	"github.com/benburkert/vcrypt/material"
+	"github.com/vcrypt/vcrypt/material"
 )
 
 // Payload encrypts and stores the data for a vault.
