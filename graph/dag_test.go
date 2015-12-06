@@ -62,6 +62,25 @@ func TestDAG(t *testing.T) {
 			OrderDFS:  []string{"A", "B", "D", "E", "C", "F", "G"},
 			OrderRDFS: []string{"D", "E", "B", "F", "G", "C", "A"},
 		},
+		// diamond tree: A -> B
+		//                 |
+		//                 -> C -> D ->-
+		//                      |      |
+		//                      -> E --> G
+		//                      |
+		//                      -> F
+		{
+			Root: "A",
+			Adjacency: map[string][]string{
+				"A": []string{"B", "C"},
+				"C": []string{"D", "E", "F"},
+				"D": []string{"G"},
+				"E": []string{"G"},
+			},
+			OrderBFS:  []string{"A", "B", "C", "D", "E", "F", "G"},
+			OrderDFS:  []string{"A", "B", "C", "D", "G", "E", "F"},
+			OrderRDFS: []string{"G", "D", "E", "F", "C", "B", "A"},
+		},
 		// cycle error:  A <-> B
 		{
 			Root: "A",

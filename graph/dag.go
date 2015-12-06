@@ -3,6 +3,7 @@ package graph
 import (
 	"container/list"
 	"errors"
+	"sort"
 )
 
 // Vertex is a vertex for DAG.
@@ -107,6 +108,54 @@ func (g *DAG) walk(v *Vertex, fn WalkFunc) error {
 	return nil
 }
 
+type vertDepth struct {
+	vert  *Vertex
+	depth int
+}
+
+type byDepth []vertDepth
+
+func (d byDepth) Len() int           { return len(d) }
+func (d byDepth) Swap(i, j int)      { d[i], d[j] = d[j], d[i] }
+func (d byDepth) Less(i, j int) bool { return d[i].depth > d[j].depth } // sort by greater depth
+
+func (g *DAG) walkByDepth(v *Vertex, fn WalkFunc) error {
+	edges := g.Adjacency[v]
+	if edges == nil {
+		return nil
+	}
+
+	vbd := byDepth{}
+	for e := edges.Front(); e != nil; e = e.Next() {
+		vert := e.Value.(*Vertex)
+		vbd = append(vbd, vertDepth{vert, g.depth(vert)})
+	}
+	sort.Sort(vbd)
+
+	for _, vd := range vbd {
+		if err := fn(vd.vert); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (g *DAG) depth(v *Vertex) int {
+	edges := g.Adjacency[v]
+	if edges == nil {
+		return 0
+	}
+
+	max := 0
+	for e := edges.Front(); e != nil; e = e.Next() {
+		if depth := g.depth(e.Value.(*Vertex)); depth > max {
+			max = depth
+		}
+	}
+
+	return 1 + max
+}
+
 // BFS walks the graph in breadth-first order.
 func (g *DAG) BFS(fn WalkFunc) error {
 	l := list.New()
@@ -170,7 +219,7 @@ func (g *DAG) rdfs(v *Vertex, visited map[*Vertex]bool, fn WalkFunc) error {
 		return g.rdfs(v, visited, fn)
 	}
 
-	if err := g.walk(v, walker); err != nil {
+	if err := g.walkByDepth(v, walker); err != nil {
 		return err
 	}
 	return fn(v)
