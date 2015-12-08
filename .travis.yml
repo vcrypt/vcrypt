@@ -1,0 +1,6 @@
+language: go
+sudo: false
+go:
+  - 1.5
+  - tip
+script: "go test -v -race ./... && rm -rf *.pb.go **/*.p{b,eg}.go && go vet ./..."

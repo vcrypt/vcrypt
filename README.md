@@ -1,4 +1,4 @@
-# vcrypt
+# vcrypt [![GoDoc](https://godoc.org/github.com/vcrypt/vcrypt?status.svg)](http://godoc.org/github.com/vcrypt/vcrypt) [![Build Status](https://travis-ci.org/vcrypt/vcrypt.svg)](https://travis-ci.org/vcrypt/vcrypt)
 
 A toolkit for multi-factor, multi-role encryption.
 
