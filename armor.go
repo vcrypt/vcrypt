@@ -1,7 +1,7 @@
 package vcrypt
 
 import (
-	"encoding/base64"
+	"encoding/hex"
 	"encoding/pem"
 	"errors"
 )
@@ -32,7 +32,7 @@ func Armor(msg Message) ([]byte, error) {
 		Type:  pemType,
 		Bytes: data,
 		Headers: map[string]string{
-			"Digest": base64.StdEncoding.EncodeToString(fp),
+			"Digest": hex.EncodeToString(fp),
 		},
 	}
 
