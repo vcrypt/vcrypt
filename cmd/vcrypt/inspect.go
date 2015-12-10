@@ -121,16 +121,30 @@ func inspectPlan(plan *vcrypt.Plan) {
 }
 
 func inspectVault(vault *vcrypt.Vault) {
-	id, err := vault.Digest()
+	vid, err := vault.Digest()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
 	}
 
-	fmt.Printf("vault %x\n", id)
-	fmt.Println()
+	fmt.Printf("vault %x\n", vid)
 
 	if cmnt := vault.Comment(); len(cmnt) > 0 {
+		fmt.Println()
+		fmt.Printf("\t%s\n", strings.Replace(cmnt, "\n", "\t\n", 0))
+		fmt.Println()
+	}
+
+	fid, err := vault.Plan.Digest()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err.Error())
+		os.Exit(1)
+	}
+
+	fmt.Printf("Plan: %x\n", fid)
+
+	if cmnt := vault.Plan.Comment(); len(cmnt) > 0 {
+		fmt.Println()
 		fmt.Printf("\t%s\n", strings.Replace(cmnt, "\n", "\t\n", 0))
 		fmt.Println()
 	}
