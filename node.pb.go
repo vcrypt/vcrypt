@@ -7,7 +7,7 @@ package vcrypt
 import proto "github.com/gogo/protobuf/proto"
 
 // discarding unused import gogoproto "github.com/gogo/protobuf/gogoproto"
-import cryptex8 "github.com/vcrypt/vcrypt/cryptex"
+import cryptex9 "github.com/vcrypt/vcrypt/cryptex"
 import secret2 "github.com/vcrypt/vcrypt/secret"
 
 import io "io"
@@ -19,7 +19,7 @@ var _ = proto.Marshal
 type Node struct {
 	Nonce   []byte             `protobuf:"bytes,1,opt,name=nonce,proto3" json:"nonce,omitempty"`
 	Inputs  [][]byte           `protobuf:"bytes,2,rep,name=inputs" json:"inputs,omitempty"`
-	cryptex *cryptex8.Envelope `protobuf:"bytes,3,opt,name=cryptex" json:"cryptex,omitempty"`
+	cryptex *cryptex9.Envelope `protobuf:"bytes,3,opt,name=cryptex" json:"cryptex,omitempty"`
 	secret  *secret2.Envelope  `protobuf:"bytes,4,opt,name=secret" json:"secret,omitempty"`
 	Marker  *Marker            `protobuf:"bytes,5,opt,name=marker" json:"marker,omitempty"`
 }
@@ -187,14 +187,14 @@ func (this *Node) SetValue(value interface{}) bool {
 		this.Nonce = vt
 	case [][]byte:
 		this.Inputs = vt
-	case *cryptex8.Envelope:
+	case *cryptex9.Envelope:
 		this.cryptex = vt
 	case *secret2.Envelope:
 		this.secret = vt
 	case *Marker:
 		this.Marker = vt
 	default:
-		this.cryptex = new(cryptex8.Envelope)
+		this.cryptex = new(cryptex9.Envelope)
 		if set := this.cryptex.SetValue(value); set {
 			return true
 		}
@@ -302,7 +302,7 @@ func (m *Node) Unmarshal(data []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.cryptex == nil {
-				m.cryptex = &cryptex8.Envelope{}
+				m.cryptex = &cryptex9.Envelope{}
 			}
 			if err := m.cryptex.Unmarshal(data[iNdEx:postIndex]); err != nil {
 				return err
