@@ -27,6 +27,7 @@ type Plan struct {
 	OpenPGPs    map[string]OpenPGP   `vcrypt:"openpgp,section"`
 	Muxes       map[string]Mux       `vcrypt:"mux,section"`
 	Demuxes     map[string]Demux     `vcrypt:"demux,section"`
+	MSPs        map[string]MSP       `vcrypt:"msp,section"`
 
 	// Secret config
 	Passwords   map[string]Password   `vcrypt:"password,section"`
@@ -76,6 +77,9 @@ func (p Plan) CryptexNode(name string) (CryptexNode, bool) {
 		return n, true
 	}
 	if n, ok := p.Demuxes[name]; ok {
+		return n, true
+	}
+	if n, ok := p.MSPs[name]; ok {
 		return n, true
 	}
 
@@ -233,6 +237,20 @@ func (n Demux) Cryptex() (cryptex.Cryptex, error) {
 
 // Edges for Demux
 func (n Demux) Edges() []string { return n.EdgeSlice }
+
+// MSP config
+type MSP struct {
+	Comment   string   `vcrypt:"comment,optional"`
+	EdgeSlice []string `vcrypt:"edge,optional"`
+
+	Predicate string `vcrypt:"predicate"`
+}
+
+func (n MSP) Cryptex() (cryptex.Cryptex, error) {
+	return cryptex.NewMSP(n.Predicate, n.Edges(), n.Comment)
+}
+
+func (n MSP) Edges() []string { return n.EdgeSlice }
 
 // Password config
 type Password struct {
