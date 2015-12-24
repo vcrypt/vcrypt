@@ -254,4 +254,240 @@ keyid = ` + Users["gloria"].OpenPGPKey.KeyID + `
 [material "gloria material"]
 
 `)
+	// AcmeBankConfig is a nested SSS plan with ssh keys.
+	AcmeBankConfig = []byte(`
+# [sss "master-key"] -> [rsa "president"] -> [ssh-key "alice@acme.bank"]
+#                    |                    |
+#                    |                    -> [material "alice material"]
+#                    |
+#                    -> [sss "vp quorum"] -> [*vote "bob:quorum"]
+#                    |                    |
+#                    |                    -> [*vote "claire:quorum"]
+#                    |                    |
+#                    |                    -> [*vote "david:quorum"]
+#                    |
+#                    -> [xor "vp consensus"] -> [*vote "bob:consenus"]
+#                    |                       |
+#                    |                       -> [*vote "claire:consensus"]
+#                    |                       |
+#                    |                       -> [*vote "david:consensus"]
+#                    |
+#                    -> [sss "so quorum"] -> [*vote "emily:quorum"]
+#                    |                    |
+#                    |                    -> [*vote "frank:quorum"]
+#                    |                    |
+#                    |                    -> [*vote "gloria:quorum"]
+#                    |
+#                    -> [xor "so consensus"] -> [*vote "emily:consenus"]
+#                                            |
+#                                            -> [*vote "frank:consensus"]
+#                                            |
+#                                            -> [*vote "gloria:consensus"]
+#
+#
+# [*vote "<name>:quorum] : [secretbox "<name> quorum vote"] ------> [material "<name> quorum material"]
+#                                                                |
+#                                                                -> [demux "<name> votes"] -> [rsa "<name>"] -> [ssh-key "<name>@acme.bank"]
+#                                                                |                                           |
+#                                                                |                                           -> [material "<name> material"]
+#                                                                |
+# [*vote "<name>:conensus] : [secretbox "<name> consensus vote"] -> [material "<name> consensus material"]
+#
+
+comment = Acme Bank Master Key Recovery Plan
+root = master-key
+
+[sss "master-key"]
+max-shares = 5
+required-shares = 3
+edge = president
+edge = vp quorum
+edge = so quorum
+edge = vp consensus
+edge = so consensus
+
+[rsa "president"]
+ssh-key = "` + Users["alice"].SSHKey.Public + `"
+edge = alice@acme.bank
+edge = alice material
+
+[ssh-key "alice@acme.bank"]
+fingerprint = ` + Users["alice"].SSHKey.Fingerprint + `
+
+[sss "vp quorum"]
+max-shares = 3
+required-shares = 2
+edge = bob quorum vote
+edge = claire quorum vote
+edge = david quorum vote
+
+[sss "so quorum"]
+max-shares = 3
+required-shares = 2
+edge = emily quorum vote
+edge = frank quorum vote
+edge = gloria quorum vote
+
+[xor "vp consensus"]
+edge = bob consensus vote
+edge = claire consensus vote
+edge = david consensus vote
+
+[xor "so consensus"]
+edge = emily consensus vote
+edge = frank consensus vote
+edge = gloria consensus vote
+
+[secretbox "bob quorum vote"]
+edge = bob votes
+edge = bob quorum material
+
+[secretbox "bob consensus vote"]
+edge = bob votes
+edge = bob consensus material
+
+[demux "bob votes"]
+edge = bob
+
+[rsa "bob"]
+ssh-key = "` + Users["bob"].SSHKey.Public + `"
+edge = bob@acme.bank
+edge = bob material
+
+[ssh-key "bob@acme.bank"]
+authorized-key = ` + Users["bob"].SSHKey.Public + `
+
+[secretbox "claire quorum vote"]
+edge = claire votes
+edge = claire quorum material
+
+[secretbox "claire consensus vote"]
+edge = claire votes
+edge = claire consensus material
+
+[demux "claire votes"]
+edge = claire
+
+[rsa "claire"]
+ssh-key = "` + Users["claire"].SSHKey.Public + `"
+edge = claire@acme.bank
+edge = claire material
+
+[ssh-key "claire@acme.bank"]
+fingerprint = ` + Users["claire"].SSHKey.Fingerprint + `
+
+[secretbox "david quorum vote"]
+edge = david votes
+edge = david quorum material
+
+[secretbox "david consensus vote"]
+edge = david votes
+edge = david consensus material
+
+[demux "david votes"]
+edge = david
+
+[rsa "david"]
+ssh-key = "` + Users["david"].SSHKey.Public + `"
+edge = david@acme.bank
+edge = david material
+
+[ssh-key "david@acme.bank"]
+authorized-key = ` + Users["david"].SSHKey.Public + `
+
+[secretbox "emily quorum vote"]
+edge = emily votes
+edge = emily quorum material
+
+[secretbox "emily consensus vote"]
+edge = emily votes
+edge = emily consensus material
+
+[demux "emily votes"]
+edge = emily
+
+[rsa "emily"]
+ssh-key = "` + Users["emily"].SSHKey.Public + `"
+edge = emily@acme.bank
+edge = emily material
+
+[ssh-key "emily@acme.bank"]
+fingerprint = ` + Users["emily"].SSHKey.Fingerprint + `
+
+[secretbox "frank quorum vote"]
+edge = frank votes
+edge = frank quorum material
+
+[secretbox "frank consensus vote"]
+edge = frank votes
+edge = frank consensus material
+
+[demux "frank votes"]
+edge = frank
+
+[rsa "frank"]
+ssh-key = "` + Users["frank"].SSHKey.Public + `"
+edge = frank@acme.bank
+edge = frank material
+
+[ssh-key "frank@acme.bank"]
+authorized-key = ` + Users["frank"].SSHKey.Public + `
+
+[secretbox "gloria quorum vote"]
+edge = gloria votes
+edge = gloria quorum material
+
+[secretbox "gloria consensus vote"]
+edge = gloria votes
+edge = gloria consensus material
+
+[demux "gloria votes"]
+edge = gloria
+
+[rsa "gloria"]
+ssh-key = "` + Users["gloria"].SSHKey.Public + `"
+edge = gloria@acme.bank
+edge = gloria material
+
+[ssh-key "gloria@acme.bank"]
+fingerprint = ` + Users["gloria"].SSHKey.Fingerprint + `
+
+[material "alice material"]
+
+[material "bob quorum material"]
+
+[material "bob consensus material"]
+
+[material "bob material"]
+
+[material "claire quorum material"]
+
+[material "claire consensus material"]
+
+[material "claire material"]
+
+[material "david quorum material"]
+
+[material "david consensus material"]
+
+[material "david material"]
+
+[material "emily quorum material"]
+
+[material "emily consensus material"]
+
+[material "emily material"]
+
+[material "frank quorum material"]
+
+[material "frank consensus material"]
+
+[material "frank material"]
+
+[material "gloria quorum material"]
+
+[material "gloria consensus material"]
+
+[material "gloria material"]
+`)
 )
