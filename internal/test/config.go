@@ -177,67 +177,67 @@ edge = frank@example.com
 edge = gloria@example.com
 
 [openpgp "alice@example.com"]
-publickey = "` + OpenPGPKeys["alice"].Public + `"
+publickey = "` + Users["alice"].OpenPGPKey.Public + `"
 edge = alice material
-edge = ` + OpenPGPKeys["alice"].KeyID + `
+edge = ` + Users["alice"].OpenPGPKey.KeyID + `
 
 [openpgp "bob@example.com"]
-publickey = "` + OpenPGPKeys["bob"].Public + `"
+publickey = "` + Users["bob"].OpenPGPKey.Public + `"
 edge = bob material
-edge = ` + OpenPGPKeys["bob"].KeyID + `
+edge = ` + Users["bob"].OpenPGPKey.KeyID + `
 
 [openpgp "claire@example.com"]
-publickey = "` + OpenPGPKeys["claire"].Public + `"
+publickey = "` + Users["claire"].OpenPGPKey.Public + `"
 edge = claire material
-edge = ` + OpenPGPKeys["claire"].KeyID + `
+edge = ` + Users["claire"].OpenPGPKey.KeyID + `
 
 [openpgp "david@example.com"]
-publickey = "` + OpenPGPKeys["david"].Public + `"
+publickey = "` + Users["david"].OpenPGPKey.Public + `"
 edge = david material
-edge = ` + OpenPGPKeys["david"].KeyID + `
+edge = ` + Users["david"].OpenPGPKey.KeyID + `
 
 [openpgp "emily@example.com"]
-publickey = "` + OpenPGPKeys["emily"].Public + `"
+publickey = "` + Users["emily"].OpenPGPKey.Public + `"
 edge = emily material
-edge = ` + OpenPGPKeys["emily"].KeyID + `
+edge = ` + Users["emily"].OpenPGPKey.KeyID + `
 
 [openpgp "frank@example.com"]
-publickey = "` + OpenPGPKeys["frank"].Public + `"
+publickey = "` + Users["frank"].OpenPGPKey.Public + `"
 edge = frank material
-edge = ` + OpenPGPKeys["frank"].KeyID + `
+edge = ` + Users["frank"].OpenPGPKey.KeyID + `
 
 [openpgp "gloria@example.com"]
-publickey = "` + OpenPGPKeys["gloria"].Public + `"
+publickey = "` + Users["gloria"].OpenPGPKey.Public + `"
 edge = gloria material
-edge = ` + OpenPGPKeys["gloria"].KeyID + `
+edge = ` + Users["gloria"].OpenPGPKey.KeyID + `
 
-[openpgp-key "` + OpenPGPKeys["alice"].KeyID + `"]
-comment = ` + OpenPGPKeys["alice"].KeyID + `
-keyid = ` + OpenPGPKeys["alice"].KeyID + `
+[openpgp-key "` + Users["alice"].OpenPGPKey.KeyID + `"]
+comment = ` + Users["alice"].OpenPGPKey.KeyID + `
+keyid = ` + Users["alice"].OpenPGPKey.KeyID + `
 
-[openpgp-key "` + OpenPGPKeys["bob"].KeyID + `"]
-comment = ` + OpenPGPKeys["bob"].KeyID + `
-keyid = ` + OpenPGPKeys["bob"].KeyID + `
+[openpgp-key "` + Users["bob"].OpenPGPKey.KeyID + `"]
+comment = ` + Users["bob"].OpenPGPKey.KeyID + `
+keyid = ` + Users["bob"].OpenPGPKey.KeyID + `
 
-[openpgp-key "` + OpenPGPKeys["claire"].KeyID + `"]
-comment = ` + OpenPGPKeys["claire"].KeyID + `
-keyid = ` + OpenPGPKeys["claire"].KeyID + `
+[openpgp-key "` + Users["claire"].OpenPGPKey.KeyID + `"]
+comment = ` + Users["claire"].OpenPGPKey.KeyID + `
+keyid = ` + Users["claire"].OpenPGPKey.KeyID + `
 
-[openpgp-key "` + OpenPGPKeys["david"].KeyID + `"]
-comment = ` + OpenPGPKeys["david"].KeyID + `
-keyid = ` + OpenPGPKeys["david"].KeyID + `
+[openpgp-key "` + Users["david"].OpenPGPKey.KeyID + `"]
+comment = ` + Users["david"].OpenPGPKey.KeyID + `
+keyid = ` + Users["david"].OpenPGPKey.KeyID + `
 
-[openpgp-key "` + OpenPGPKeys["emily"].KeyID + `"]
-comment = ` + OpenPGPKeys["emily"].KeyID + `
-keyid = ` + OpenPGPKeys["emily"].KeyID + `
+[openpgp-key "` + Users["emily"].OpenPGPKey.KeyID + `"]
+comment = ` + Users["emily"].OpenPGPKey.KeyID + `
+keyid = ` + Users["emily"].OpenPGPKey.KeyID + `
 
-[openpgp-key "` + OpenPGPKeys["frank"].KeyID + `"]
-comment = ` + OpenPGPKeys["frank"].KeyID + `
-keyid = ` + OpenPGPKeys["frank"].KeyID + `
+[openpgp-key "` + Users["frank"].OpenPGPKey.KeyID + `"]
+comment = ` + Users["frank"].OpenPGPKey.KeyID + `
+keyid = ` + Users["frank"].OpenPGPKey.KeyID + `
 
-[openpgp-key "` + OpenPGPKeys["gloria"].KeyID + `"]
-comment = ` + OpenPGPKeys["gloria"].KeyID + `
-keyid = ` + OpenPGPKeys["gloria"].KeyID + `
+[openpgp-key "` + Users["gloria"].OpenPGPKey.KeyID + `"]
+comment = ` + Users["gloria"].OpenPGPKey.KeyID + `
+keyid = ` + Users["gloria"].OpenPGPKey.KeyID + `
 
 [material "alice material"]
 
