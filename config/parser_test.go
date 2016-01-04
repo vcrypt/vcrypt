@@ -249,112 +249,112 @@ func TestParser(t *testing.T) {
 					ID:   "alice@example.com",
 					Type: "openpgp",
 					Values: map[string][]string{
-						"publickey": {test.OpenPGPKeys["alice"].Public},
-						"edge":      {"alice material", test.OpenPGPKeys["alice"].KeyID},
+						"publickey": {test.Users["alice"].OpenPGPKey.Public},
+						"edge":      {"alice material", test.Users["alice"].OpenPGPKey.KeyID},
 					},
 				},
 				{
 					ID:   "bob@example.com",
 					Type: "openpgp",
 					Values: map[string][]string{
-						"publickey": {test.OpenPGPKeys["bob"].Public},
-						"edge":      {"bob material", test.OpenPGPKeys["bob"].KeyID},
+						"publickey": {test.Users["bob"].OpenPGPKey.Public},
+						"edge":      {"bob material", test.Users["bob"].OpenPGPKey.KeyID},
 					},
 				},
 				{
 					ID:   "claire@example.com",
 					Type: "openpgp",
 					Values: map[string][]string{
-						"publickey": {test.OpenPGPKeys["claire"].Public},
-						"edge":      {"claire material", test.OpenPGPKeys["claire"].KeyID},
+						"publickey": {test.Users["claire"].OpenPGPKey.Public},
+						"edge":      {"claire material", test.Users["claire"].OpenPGPKey.KeyID},
 					},
 				},
 				{
 					ID:   "david@example.com",
 					Type: "openpgp",
 					Values: map[string][]string{
-						"publickey": {test.OpenPGPKeys["david"].Public},
-						"edge":      {"david material", test.OpenPGPKeys["david"].KeyID},
+						"publickey": {test.Users["david"].OpenPGPKey.Public},
+						"edge":      {"david material", test.Users["david"].OpenPGPKey.KeyID},
 					},
 				},
 				{
 					ID:   "emily@example.com",
 					Type: "openpgp",
 					Values: map[string][]string{
-						"publickey": {test.OpenPGPKeys["emily"].Public},
-						"edge":      {"emily material", test.OpenPGPKeys["emily"].KeyID},
+						"publickey": {test.Users["emily"].OpenPGPKey.Public},
+						"edge":      {"emily material", test.Users["emily"].OpenPGPKey.KeyID},
 					},
 				},
 				{
 					ID:   "frank@example.com",
 					Type: "openpgp",
 					Values: map[string][]string{
-						"publickey": {test.OpenPGPKeys["frank"].Public},
-						"edge":      {"frank material", test.OpenPGPKeys["frank"].KeyID},
+						"publickey": {test.Users["frank"].OpenPGPKey.Public},
+						"edge":      {"frank material", test.Users["frank"].OpenPGPKey.KeyID},
 					},
 				},
 				{
 					ID:   "gloria@example.com",
 					Type: "openpgp",
 					Values: map[string][]string{
-						"publickey": {test.OpenPGPKeys["gloria"].Public},
-						"edge":      {"gloria material", test.OpenPGPKeys["gloria"].KeyID},
+						"publickey": {test.Users["gloria"].OpenPGPKey.Public},
+						"edge":      {"gloria material", test.Users["gloria"].OpenPGPKey.KeyID},
 					},
 				},
 				{
-					ID:   test.OpenPGPKeys["alice"].KeyID,
+					ID:   test.Users["alice"].OpenPGPKey.KeyID,
 					Type: "openpgp-key",
 					Values: map[string][]string{
-						"comment": {test.OpenPGPKeys["alice"].KeyID},
-						"keyid":   {test.OpenPGPKeys["alice"].KeyID},
+						"comment": {test.Users["alice"].OpenPGPKey.KeyID},
+						"keyid":   {test.Users["alice"].OpenPGPKey.KeyID},
 					},
 				},
 				{
-					ID:   test.OpenPGPKeys["bob"].KeyID,
+					ID:   test.Users["bob"].OpenPGPKey.KeyID,
 					Type: "openpgp-key",
 					Values: map[string][]string{
-						"comment": {test.OpenPGPKeys["bob"].KeyID},
-						"keyid":   {test.OpenPGPKeys["bob"].KeyID},
+						"comment": {test.Users["bob"].OpenPGPKey.KeyID},
+						"keyid":   {test.Users["bob"].OpenPGPKey.KeyID},
 					},
 				},
 				{
-					ID:   test.OpenPGPKeys["claire"].KeyID,
+					ID:   test.Users["claire"].OpenPGPKey.KeyID,
 					Type: "openpgp-key",
 					Values: map[string][]string{
-						"comment": {test.OpenPGPKeys["claire"].KeyID},
-						"keyid":   {test.OpenPGPKeys["claire"].KeyID},
+						"comment": {test.Users["claire"].OpenPGPKey.KeyID},
+						"keyid":   {test.Users["claire"].OpenPGPKey.KeyID},
 					},
 				},
 				{
-					ID:   test.OpenPGPKeys["david"].KeyID,
+					ID:   test.Users["david"].OpenPGPKey.KeyID,
 					Type: "openpgp-key",
 					Values: map[string][]string{
-						"comment": {test.OpenPGPKeys["david"].KeyID},
-						"keyid":   {test.OpenPGPKeys["david"].KeyID},
+						"comment": {test.Users["david"].OpenPGPKey.KeyID},
+						"keyid":   {test.Users["david"].OpenPGPKey.KeyID},
 					},
 				},
 				{
-					ID:   test.OpenPGPKeys["emily"].KeyID,
+					ID:   test.Users["emily"].OpenPGPKey.KeyID,
 					Type: "openpgp-key",
 					Values: map[string][]string{
-						"comment": {test.OpenPGPKeys["emily"].KeyID},
-						"keyid":   {test.OpenPGPKeys["emily"].KeyID},
+						"comment": {test.Users["emily"].OpenPGPKey.KeyID},
+						"keyid":   {test.Users["emily"].OpenPGPKey.KeyID},
 					},
 				},
 				{
-					ID:   test.OpenPGPKeys["frank"].KeyID,
+					ID:   test.Users["frank"].OpenPGPKey.KeyID,
 					Type: "openpgp-key",
 					Values: map[string][]string{
-						"comment": {test.OpenPGPKeys["frank"].KeyID},
-						"keyid":   {test.OpenPGPKeys["frank"].KeyID},
+						"comment": {test.Users["frank"].OpenPGPKey.KeyID},
+						"keyid":   {test.Users["frank"].OpenPGPKey.KeyID},
 					},
 				},
 				{
-					ID:   test.OpenPGPKeys["gloria"].KeyID,
+					ID:   test.Users["gloria"].OpenPGPKey.KeyID,
 					Type: "openpgp-key",
 					Values: map[string][]string{
-						"comment": {test.OpenPGPKeys["gloria"].KeyID},
-						"keyid":   {test.OpenPGPKeys["gloria"].KeyID},
+						"comment": {test.Users["gloria"].OpenPGPKey.KeyID},
+						"keyid":   {test.Users["gloria"].OpenPGPKey.KeyID},
 					},
 				},
 				{

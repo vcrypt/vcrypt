@@ -130,13 +130,13 @@ func TestGraph(t *testing.T) {
 				"", // [openpgp-key "emily@example.com"]
 				"", // [openpgp-key "frank@example.com"]
 				"", // [openpgp-key "gloria@example.com"]
-				test.OpenPGPKeys["alice"].KeyID,  // [material "alice@example.com"]
-				test.OpenPGPKeys["bob"].KeyID,    // [material "bob@example.com"]
-				test.OpenPGPKeys["claire"].KeyID, // [material "claire@example.com"]
-				test.OpenPGPKeys["david"].KeyID,  // [material "david@example.com"]
-				test.OpenPGPKeys["emily"].KeyID,  // [material "emily@example.com"]
-				test.OpenPGPKeys["frank"].KeyID,  // [material "frank@example.com"]
-				test.OpenPGPKeys["gloria"].KeyID, // [material "gloria@example.com"]
+				test.Users["alice"].OpenPGPKey.KeyID,  // [material "alice@example.com"]
+				test.Users["bob"].OpenPGPKey.KeyID,    // [material "bob@example.com"]
+				test.Users["claire"].OpenPGPKey.KeyID, // [material "claire@example.com"]
+				test.Users["david"].OpenPGPKey.KeyID,  // [material "david@example.com"]
+				test.Users["emily"].OpenPGPKey.KeyID,  // [material "emily@example.com"]
+				test.Users["frank"].OpenPGPKey.KeyID,  // [material "frank@example.com"]
+				test.Users["gloria"].OpenPGPKey.KeyID, // [material "gloria@example.com"]
 			},
 		},
 	}
