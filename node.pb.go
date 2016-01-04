@@ -8,7 +8,7 @@ import proto "github.com/gogo/protobuf/proto"
 
 // discarding unused import gogoproto "github.com/gogo/protobuf/gogoproto"
 import cryptex8 "github.com/vcrypt/vcrypt/cryptex"
-import secret2 "github.com/vcrypt/vcrypt/secret"
+import secret3 "github.com/vcrypt/vcrypt/secret"
 
 import io "io"
 import fmt "fmt"
@@ -20,7 +20,7 @@ type Node struct {
 	Nonce   []byte             `protobuf:"bytes,1,opt,name=nonce,proto3" json:"nonce,omitempty"`
 	Inputs  [][]byte           `protobuf:"bytes,2,rep,name=inputs" json:"inputs,omitempty"`
 	cryptex *cryptex8.Envelope `protobuf:"bytes,3,opt,name=cryptex" json:"cryptex,omitempty"`
-	secret  *secret2.Envelope  `protobuf:"bytes,4,opt,name=secret" json:"secret,omitempty"`
+	secret  *secret3.Envelope  `protobuf:"bytes,4,opt,name=secret" json:"secret,omitempty"`
 	Marker  *Marker            `protobuf:"bytes,5,opt,name=marker" json:"marker,omitempty"`
 }
 
@@ -189,7 +189,7 @@ func (this *Node) SetValue(value interface{}) bool {
 		this.Inputs = vt
 	case *cryptex8.Envelope:
 		this.cryptex = vt
-	case *secret2.Envelope:
+	case *secret3.Envelope:
 		this.secret = vt
 	case *Marker:
 		this.Marker = vt
@@ -199,7 +199,7 @@ func (this *Node) SetValue(value interface{}) bool {
 			return true
 		}
 		this.cryptex = nil
-		this.secret = new(secret2.Envelope)
+		this.secret = new(secret3.Envelope)
 		if set := this.secret.SetValue(value); set {
 			return true
 		}
@@ -332,7 +332,7 @@ func (m *Node) Unmarshal(data []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.secret == nil {
-				m.secret = &secret2.Envelope{}
+				m.secret = &secret3.Envelope{}
 			}
 			if err := m.secret.Unmarshal(data[iNdEx:postIndex]); err != nil {
 				return err
