@@ -12,6 +12,7 @@ var (
 	twoPartyPlan = buildPlan(twoPartyGraph, "two-party lock plan")
 	diamondPlan  = buildPlan(diamondGraph, "diamond plan")
 	dnsSecPlan   = buildPlan(dnsSecGraph, "DNSSEC root key plan")
+	acmeBankPlan = buildPlan(acmeBankGraph, "Acme Bank Master Key Recovery plan")
 )
 
 func TestPlan(t *testing.T) {
@@ -34,6 +35,10 @@ func TestPlan(t *testing.T) {
 		{
 			Plan:  dnsSecPlan,
 			Graph: dnsSecGraph,
+		},
+		{
+			Plan:  acmeBankPlan,
+			Graph: acmeBankGraph,
 		},
 	}
 

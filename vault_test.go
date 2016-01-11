@@ -16,6 +16,7 @@ var (
 	twoPartyVault, twoPartySecret = buildVault(twoPartyPlan, twoPartyDriver)
 	diamondVault, diamondSecret   = buildVault(diamondPlan, diamondDriver)
 	dnsSecVault, dnsSecSecret     = buildVault(dnsSecPlan, dnsSecDriver)
+	acmeBankVault, acmeBankSecret = buildVault(acmeBankPlan, acmeBankDriver)
 
 	twoManDriver = test.Driver(map[string][]byte{
 		"op 1 secret": []byte("key #1"),
@@ -36,14 +37,16 @@ var (
 	})
 
 	dnsSecDriver = test.Driver(map[string][]byte{
-		test.OpenPGPKeys["alice"].KeyID:  mustOpenPGPKey(test.OpenPGPKeys["alice"].Private),
-		test.OpenPGPKeys["bob"].KeyID:    mustOpenPGPKey(test.OpenPGPKeys["bob"].Private),
-		test.OpenPGPKeys["claire"].KeyID: mustOpenPGPKey(test.OpenPGPKeys["claire"].Private),
-		test.OpenPGPKeys["david"].KeyID:  mustOpenPGPKey(test.OpenPGPKeys["david"].Private),
-		test.OpenPGPKeys["emily"].KeyID:  mustOpenPGPKey(test.OpenPGPKeys["emily"].Private),
-		test.OpenPGPKeys["frank"].KeyID:  mustOpenPGPKey(test.OpenPGPKeys["frank"].Private),
-		test.OpenPGPKeys["gloria"].KeyID: mustOpenPGPKey(test.OpenPGPKeys["gloria"].Private),
+		test.Users["alice"].OpenPGPKey.KeyID:  mustOpenPGPKey(test.Users["alice"].OpenPGPKey.Private),
+		test.Users["bob"].OpenPGPKey.KeyID:    mustOpenPGPKey(test.Users["bob"].OpenPGPKey.Private),
+		test.Users["claire"].OpenPGPKey.KeyID: mustOpenPGPKey(test.Users["claire"].OpenPGPKey.Private),
+		test.Users["david"].OpenPGPKey.KeyID:  mustOpenPGPKey(test.Users["david"].OpenPGPKey.Private),
+		test.Users["emily"].OpenPGPKey.KeyID:  mustOpenPGPKey(test.Users["emily"].OpenPGPKey.Private),
+		test.Users["frank"].OpenPGPKey.KeyID:  mustOpenPGPKey(test.Users["frank"].OpenPGPKey.Private),
+		test.Users["gloria"].OpenPGPKey.KeyID: mustOpenPGPKey(test.Users["gloria"].OpenPGPKey.Private),
 	})
+
+	acmeBankDriver = test.Driver(map[string][]byte{})
 )
 
 func TestVault(t *testing.T) {
@@ -56,6 +59,7 @@ func TestVault(t *testing.T) {
 		{twoPartyVault, twoPartyDriver, twoPartySecret},
 		{diamondVault, diamondDriver, diamondSecret},
 		{dnsSecVault, dnsSecDriver, dnsSecSecret},
+		{acmeBankVault, acmeBankDriver, acmeBankSecret},
 	}
 
 	for _, test := range tests {
@@ -95,7 +99,8 @@ func TestMultiPassVault(t *testing.T) {
 	}
 
 	step := 0
-	for _, key := range test.OpenPGPKeys {
+	for _, userdata := range test.Users {
+		key := userdata.OpenPGPKey
 		driver.Driver[key.KeyID] = mustOpenPGPKey(key.Private)
 
 		ok, err := vault.Unlock(&got, driver)

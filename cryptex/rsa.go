@@ -8,7 +8,8 @@ import (
 	"errors"
 )
 
-// NewRSA constructs a new RSA for the RSA PublicKey pair.
+// NewRSA constructs a new RSA for the RSA PublicKey pair from a PKIX encoded
+// public key.
 func NewRSA(publicKey []byte, comment string) *RSA {
 	return &RSA{
 		PublicKey: publicKey,

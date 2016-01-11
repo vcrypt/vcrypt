@@ -9,6 +9,7 @@
 		secret/secret.proto
 		secret/password.proto
 		secret/openpgpkey.proto
+		secret/sshkey.proto
 
 	It has these top-level messages:
 		Envelope
@@ -28,6 +29,7 @@ var _ = proto.Marshal
 type Envelope struct {
 	Password   *Password   `protobuf:"bytes,1,opt,name=password" json:"password,omitempty"`
 	OpenPGPKey *OpenPGPKey `protobuf:"bytes,2,opt,name=openpgpkey" json:"openpgpkey,omitempty"`
+	SSHKey     *SSHKey     `protobuf:"bytes,3,opt,name=sshkey" json:"sshkey,omitempty"`
 }
 
 func (m *Envelope) Reset()         { *m = Envelope{} }
@@ -44,6 +46,13 @@ func (m *Envelope) GetPassword() *Password {
 func (m *Envelope) GetOpenPGPKey() *OpenPGPKey {
 	if m != nil {
 		return m.OpenPGPKey
+	}
+	return nil
+}
+
+func (m *Envelope) GetSSHKey() *SSHKey {
+	if m != nil {
+		return m.SSHKey
 	}
 	return nil
 }
@@ -82,6 +91,16 @@ func (m *Envelope) MarshalTo(data []byte) (int, error) {
 			return 0, err
 		}
 		i += n2
+	}
+	if m.SSHKey != nil {
+		data[i] = 0x1a
+		i++
+		i = encodeVarintSecret(data, i, uint64(m.SSHKey.Size()))
+		n3, err := m.SSHKey.MarshalTo(data[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n3
 	}
 	return i, nil
 }
@@ -124,6 +143,10 @@ func (m *Envelope) Size() (n int) {
 		l = m.OpenPGPKey.Size()
 		n += 1 + l + sovSecret(uint64(l))
 	}
+	if m.SSHKey != nil {
+		l = m.SSHKey.Size()
+		n += 1 + l + sovSecret(uint64(l))
+	}
 	return n
 }
 
@@ -147,6 +170,9 @@ func (this *Envelope) GetValue() interface{} {
 	if this.OpenPGPKey != nil {
 		return this.OpenPGPKey
 	}
+	if this.SSHKey != nil {
+		return this.SSHKey
+	}
 	return nil
 }
 
@@ -156,6 +182,8 @@ func (this *Envelope) SetValue(value interface{}) bool {
 		this.Password = vt
 	case *OpenPGPKey:
 		this.OpenPGPKey = vt
+	case *SSHKey:
+		this.SSHKey = vt
 	default:
 		return false
 	}
@@ -237,6 +265,36 @@ func (m *Envelope) Unmarshal(data []byte) error {
 				m.OpenPGPKey = &OpenPGPKey{}
 			}
 			if err := m.OpenPGPKey.Unmarshal(data[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SSHKey", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := data[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			postIndex := iNdEx + msglen
+			if msglen < 0 {
+				return ErrInvalidLengthSecret
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.SSHKey == nil {
+				m.SSHKey = &SSHKey{}
+			}
+			if err := m.SSHKey.Unmarshal(data[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
