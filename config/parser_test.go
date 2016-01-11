@@ -394,6 +394,464 @@ func TestParser(t *testing.T) {
 				},
 			},
 		},
+		{
+			data: test.AcmeBankConfig,
+			want: []*section{
+				{
+					Type: "",
+					Values: map[string][]string{
+						"comment": {"Acme Bank Master Key Recovery Plan"},
+						"root":    {"master-key"},
+					},
+				},
+				{
+					ID:   "master-key",
+					Type: "sss",
+					Values: map[string][]string{
+						"max-shares":      {"5"},
+						"required-shares": {"3"},
+						"edge": {
+							"president",
+							"vp quorum",
+							"so quorum",
+							"vp consensus",
+							"so consensus",
+						},
+					},
+				},
+				{
+					ID:   "president",
+					Type: "rsa",
+					Values: map[string][]string{
+						"ssh-key": {test.Users["alice"].SSHKey.Public},
+						"edge": {
+							"alice@acme.bank",
+							"alice material",
+						},
+					},
+				},
+				{
+					ID:   "alice@acme.bank",
+					Type: "ssh-key",
+					Values: map[string][]string{
+						"fingerprint": {test.Users["alice"].SSHKey.Fingerprint},
+					},
+				},
+				{
+					ID:   "vp quorum",
+					Type: "sss",
+					Values: map[string][]string{
+						"max-shares":      {"3"},
+						"required-shares": {"2"},
+						"edge": {
+							"bob quorum vote",
+							"claire quorum vote",
+							"david quorum vote",
+						},
+					},
+				},
+				{
+					ID:   "so quorum",
+					Type: "sss",
+					Values: map[string][]string{
+						"max-shares":      {"3"},
+						"required-shares": {"2"},
+						"edge": {
+							"emily quorum vote",
+							"frank quorum vote",
+							"gloria quorum vote",
+						},
+					},
+				},
+				{
+					ID:   "vp consensus",
+					Type: "xor",
+					Values: map[string][]string{
+						"edge": {
+							"bob consensus vote",
+							"claire consensus vote",
+							"david consensus vote",
+						},
+					},
+				},
+				{
+					ID:   "so consensus",
+					Type: "xor",
+					Values: map[string][]string{
+						"edge": {
+							"emily consensus vote",
+							"frank consensus vote",
+							"gloria consensus vote",
+						},
+					},
+				},
+				{
+					ID:   "bob quorum vote",
+					Type: "secretbox",
+					Values: map[string][]string{
+						"edge": {
+							"bob votes",
+							"bob quorum material",
+						},
+					},
+				},
+				{
+					ID:   "bob consensus vote",
+					Type: "secretbox",
+					Values: map[string][]string{
+						"edge": {
+							"bob votes",
+							"bob consensus material",
+						},
+					},
+				},
+				{
+					ID:   "bob votes",
+					Type: "demux",
+					Values: map[string][]string{
+						"edge": {"bob"},
+					},
+				},
+				{
+					ID:   "bob",
+					Type: "rsa",
+					Values: map[string][]string{
+						"ssh-key": {test.Users["bob"].SSHKey.Public},
+						"edge": {
+							"bob@acme.bank",
+							"bob material",
+						},
+					},
+				},
+				{
+					ID:   "bob@acme.bank",
+					Type: "ssh-key",
+					Values: map[string][]string{
+						"authorized-key": {test.Users["bob"].SSHKey.Public},
+					},
+				},
+				{
+					ID:   "claire quorum vote",
+					Type: "secretbox",
+					Values: map[string][]string{
+						"edge": {
+							"claire votes",
+							"claire quorum material",
+						},
+					},
+				},
+				{
+					ID:   "claire consensus vote",
+					Type: "secretbox",
+					Values: map[string][]string{
+						"edge": {
+							"claire votes",
+							"claire consensus material",
+						},
+					},
+				},
+				{
+					ID:   "claire votes",
+					Type: "demux",
+					Values: map[string][]string{
+						"edge": {"claire"},
+					},
+				},
+				{
+					ID:   "claire",
+					Type: "rsa",
+					Values: map[string][]string{
+						"ssh-key": {test.Users["claire"].SSHKey.Public},
+						"edge": {
+							"claire@acme.bank",
+							"claire material",
+						},
+					},
+				},
+				{
+					ID:   "claire@acme.bank",
+					Type: "ssh-key",
+					Values: map[string][]string{
+						"fingerprint": {test.Users["claire"].SSHKey.Fingerprint},
+					},
+				},
+				{
+					ID:   "david quorum vote",
+					Type: "secretbox",
+					Values: map[string][]string{
+						"edge": {
+							"david votes",
+							"david quorum material",
+						},
+					},
+				},
+				{
+					ID:   "david consensus vote",
+					Type: "secretbox",
+					Values: map[string][]string{
+						"edge": {
+							"david votes",
+							"david consensus material",
+						},
+					},
+				},
+				{
+					ID:   "david votes",
+					Type: "demux",
+					Values: map[string][]string{
+						"edge": {"david"},
+					},
+				},
+				{
+					ID:   "david",
+					Type: "rsa",
+					Values: map[string][]string{
+						"ssh-key": {test.Users["david"].SSHKey.Public},
+						"edge": {
+							"david@acme.bank",
+							"david material",
+						},
+					},
+				},
+				{
+					ID:   "david@acme.bank",
+					Type: "ssh-key",
+					Values: map[string][]string{
+						"authorized-key": {test.Users["david"].SSHKey.Public},
+					},
+				},
+				{
+					ID:   "emily quorum vote",
+					Type: "secretbox",
+					Values: map[string][]string{
+						"edge": {
+							"emily votes",
+							"emily quorum material",
+						},
+					},
+				},
+				{
+					ID:   "emily consensus vote",
+					Type: "secretbox",
+					Values: map[string][]string{
+						"edge": {
+							"emily votes",
+							"emily consensus material",
+						},
+					},
+				},
+				{
+					ID:   "emily votes",
+					Type: "demux",
+					Values: map[string][]string{
+						"edge": {"emily"},
+					},
+				},
+				{
+					ID:   "emily",
+					Type: "rsa",
+					Values: map[string][]string{
+						"ssh-key": {test.Users["emily"].SSHKey.Public},
+						"edge": {
+							"emily@acme.bank",
+							"emily material",
+						},
+					},
+				},
+				{
+					ID:   "emily@acme.bank",
+					Type: "ssh-key",
+					Values: map[string][]string{
+						"fingerprint": {test.Users["emily"].SSHKey.Fingerprint},
+					},
+				},
+				{
+					ID:   "frank quorum vote",
+					Type: "secretbox",
+					Values: map[string][]string{
+						"edge": {
+							"frank votes",
+							"frank quorum material",
+						},
+					},
+				},
+				{
+					ID:   "frank consensus vote",
+					Type: "secretbox",
+					Values: map[string][]string{
+						"edge": {
+							"frank votes",
+							"frank consensus material",
+						},
+					},
+				},
+				{
+					ID:   "frank votes",
+					Type: "demux",
+					Values: map[string][]string{
+						"edge": {"frank"},
+					},
+				},
+				{
+					ID:   "frank",
+					Type: "rsa",
+					Values: map[string][]string{
+						"ssh-key": {test.Users["frank"].SSHKey.Public},
+						"edge": {
+							"frank@acme.bank",
+							"frank material",
+						},
+					},
+				},
+				{
+					ID:   "frank@acme.bank",
+					Type: "ssh-key",
+					Values: map[string][]string{
+						"authorized-key": {test.Users["frank"].SSHKey.Public},
+					},
+				},
+				{
+					ID:   "gloria quorum vote",
+					Type: "secretbox",
+					Values: map[string][]string{
+						"edge": {
+							"gloria votes",
+							"gloria quorum material",
+						},
+					},
+				},
+				{
+					ID:   "gloria consensus vote",
+					Type: "secretbox",
+					Values: map[string][]string{
+						"edge": {
+							"gloria votes",
+							"gloria consensus material",
+						},
+					},
+				},
+				{
+					ID:   "gloria votes",
+					Type: "demux",
+					Values: map[string][]string{
+						"edge": {"gloria"},
+					},
+				},
+				{
+					ID:   "gloria",
+					Type: "rsa",
+					Values: map[string][]string{
+						"ssh-key": {test.Users["gloria"].SSHKey.Public},
+						"edge": {
+							"gloria@acme.bank",
+							"gloria material",
+						},
+					},
+				},
+				{
+					ID:   "gloria@acme.bank",
+					Type: "ssh-key",
+					Values: map[string][]string{
+						"fingerprint": {test.Users["gloria"].SSHKey.Fingerprint},
+					},
+				},
+				{
+					ID:     "alice material",
+					Type:   "material",
+					Values: map[string][]string{},
+				},
+				{
+					ID:     "bob quorum material",
+					Type:   "material",
+					Values: map[string][]string{},
+				},
+				{
+					ID:     "bob consensus material",
+					Type:   "material",
+					Values: map[string][]string{},
+				},
+				{
+					ID:     "bob material",
+					Type:   "material",
+					Values: map[string][]string{},
+				},
+				{
+					ID:     "claire quorum material",
+					Type:   "material",
+					Values: map[string][]string{},
+				},
+				{
+					ID:     "claire consensus material",
+					Type:   "material",
+					Values: map[string][]string{},
+				},
+				{
+					ID:     "claire material",
+					Type:   "material",
+					Values: map[string][]string{},
+				},
+				{
+					ID:     "david quorum material",
+					Type:   "material",
+					Values: map[string][]string{},
+				},
+				{
+					ID:     "david consensus material",
+					Type:   "material",
+					Values: map[string][]string{},
+				},
+				{
+					ID:     "david material",
+					Type:   "material",
+					Values: map[string][]string{},
+				},
+				{
+					ID:     "emily quorum material",
+					Type:   "material",
+					Values: map[string][]string{},
+				},
+				{
+					ID:     "emily consensus material",
+					Type:   "material",
+					Values: map[string][]string{},
+				},
+				{
+					ID:     "emily material",
+					Type:   "material",
+					Values: map[string][]string{},
+				},
+				{
+					ID:     "frank quorum material",
+					Type:   "material",
+					Values: map[string][]string{},
+				},
+				{
+					ID:     "frank consensus material",
+					Type:   "material",
+					Values: map[string][]string{},
+				},
+				{
+					ID:     "frank material",
+					Type:   "material",
+					Values: map[string][]string{},
+				},
+				{
+					ID:     "gloria quorum material",
+					Type:   "material",
+					Values: map[string][]string{},
+				},
+				{
+					ID:     "gloria consensus material",
+					Type:   "material",
+					Values: map[string][]string{},
+				},
+				{
+					ID:     "gloria material",
+					Type:   "material",
+					Values: map[string][]string{},
+				},
+			},
+		},
 	}
 
 	for _, test := range tests {

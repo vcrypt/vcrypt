@@ -201,6 +201,261 @@ func TestUnmarshal(t *testing.T) {
 				},
 			},
 		},
+		{
+			data: test.AcmeBankConfig,
+			plan: Plan{
+				Comment: "Acme Bank Master Key Recovery Plan",
+				Root:    "master-key",
+				SSSs: map[string]SSS{
+					"master-key": {
+						N: 5,
+						K: 3,
+						EdgeSlice: []string{
+							"president",
+							"vp quorum",
+							"so quorum",
+							"vp consensus",
+							"so consensus",
+						},
+					},
+					"vp quorum": {
+						N: 3,
+						K: 2,
+						EdgeSlice: []string{
+							"bob quorum vote",
+							"claire quorum vote",
+							"david quorum vote",
+						},
+					},
+					"so quorum": {
+						N: 3,
+						K: 2,
+						EdgeSlice: []string{
+							"emily quorum vote",
+							"frank quorum vote",
+							"gloria quorum vote",
+						},
+					},
+				},
+				XORs: map[string]XOR{
+					"vp consensus": {
+						EdgeSlice: []string{
+							"bob consensus vote",
+							"claire consensus vote",
+							"david consensus vote",
+						},
+					},
+					"so consensus": {
+						EdgeSlice: []string{
+							"emily consensus vote",
+							"frank consensus vote",
+							"gloria consensus vote",
+						},
+					},
+				},
+				SecretBoxes: map[string]SecretBox{
+					"bob quorum vote": {
+						EdgeSlice: []string{
+							"bob votes",
+							"bob quorum material",
+						},
+					},
+					"bob consensus vote": {
+						EdgeSlice: []string{
+							"bob votes",
+							"bob consensus material",
+						},
+					},
+					"claire quorum vote": {
+						EdgeSlice: []string{
+							"claire votes",
+							"claire quorum material",
+						},
+					},
+					"claire consensus vote": {
+						EdgeSlice: []string{
+							"claire votes",
+							"claire consensus material",
+						},
+					},
+					"david quorum vote": {
+						EdgeSlice: []string{
+							"david votes",
+							"david quorum material",
+						},
+					},
+					"david consensus vote": {
+						EdgeSlice: []string{
+							"david votes",
+							"david consensus material",
+						},
+					},
+					"emily quorum vote": {
+						EdgeSlice: []string{
+							"emily votes",
+							"emily quorum material",
+						},
+					},
+					"emily consensus vote": {
+						EdgeSlice: []string{
+							"emily votes",
+							"emily consensus material",
+						},
+					},
+					"frank quorum vote": {
+						EdgeSlice: []string{
+							"frank votes",
+							"frank quorum material",
+						},
+					},
+					"frank consensus vote": {
+						EdgeSlice: []string{
+							"frank votes",
+							"frank consensus material",
+						},
+					},
+					"gloria quorum vote": {
+						EdgeSlice: []string{
+							"gloria votes",
+							"gloria quorum material",
+						},
+					},
+					"gloria consensus vote": {
+						EdgeSlice: []string{
+							"gloria votes",
+							"gloria consensus material",
+						},
+					},
+				},
+				Demuxes: map[string]Demux{
+					"bob votes": {
+						EdgeSlice: []string{
+							"bob",
+						},
+					},
+					"claire votes": {
+						EdgeSlice: []string{
+							"claire",
+						},
+					},
+					"david votes": {
+						EdgeSlice: []string{
+							"david",
+						},
+					},
+					"emily votes": {
+						EdgeSlice: []string{
+							"emily",
+						},
+					},
+					"frank votes": {
+						EdgeSlice: []string{
+							"frank",
+						},
+					},
+					"gloria votes": {
+						EdgeSlice: []string{
+							"gloria",
+						},
+					},
+				},
+				RSAs: map[string]RSA{
+					"president": {
+						SSHKey: test.Users["alice"].SSHKey.Public,
+						EdgeSlice: []string{
+							"alice@acme.bank",
+							"alice material",
+						},
+					},
+					"bob": {
+						SSHKey: test.Users["bob"].SSHKey.Public,
+						EdgeSlice: []string{
+							"bob@acme.bank",
+							"bob material",
+						},
+					},
+					"claire": {
+						SSHKey: test.Users["claire"].SSHKey.Public,
+						EdgeSlice: []string{
+							"claire@acme.bank",
+							"claire material",
+						},
+					},
+					"david": {
+						SSHKey: test.Users["david"].SSHKey.Public,
+						EdgeSlice: []string{
+							"david@acme.bank",
+							"david material",
+						},
+					},
+					"emily": {
+						SSHKey: test.Users["emily"].SSHKey.Public,
+						EdgeSlice: []string{
+							"emily@acme.bank",
+							"emily material",
+						},
+					},
+					"frank": {
+						SSHKey: test.Users["frank"].SSHKey.Public,
+						EdgeSlice: []string{
+							"frank@acme.bank",
+							"frank material",
+						},
+					},
+					"gloria": {
+						SSHKey: test.Users["gloria"].SSHKey.Public,
+						EdgeSlice: []string{
+							"gloria@acme.bank",
+							"gloria material",
+						},
+					},
+				},
+				SSHKeys: map[string]SSHKey{
+					"alice@acme.bank": {
+						Fingerprint: test.Users["alice"].SSHKey.Fingerprint,
+					},
+					"bob@acme.bank": {
+						AuthorizedKey: test.Users["bob"].SSHKey.Public,
+					},
+					"claire@acme.bank": {
+						Fingerprint: test.Users["claire"].SSHKey.Fingerprint,
+					},
+					"david@acme.bank": {
+						AuthorizedKey: test.Users["david"].SSHKey.Public,
+					},
+					"emily@acme.bank": {
+						Fingerprint: test.Users["emily"].SSHKey.Fingerprint,
+					},
+					"frank@acme.bank": {
+						AuthorizedKey: test.Users["frank"].SSHKey.Public,
+					},
+					"gloria@acme.bank": {
+						Fingerprint: test.Users["gloria"].SSHKey.Fingerprint,
+					},
+				},
+				Materials: map[string]Marker{
+					"alice material":            {},
+					"bob quorum material":       {},
+					"bob consensus material":    {},
+					"bob material":              {},
+					"claire quorum material":    {},
+					"claire consensus material": {},
+					"claire material":           {},
+					"david quorum material":     {},
+					"david consensus material":  {},
+					"david material":            {},
+					"emily quorum material":     {},
+					"emily consensus material":  {},
+					"emily material":            {},
+					"frank quorum material":     {},
+					"frank consensus material":  {},
+					"frank material":            {},
+					"gloria quorum material":    {},
+					"gloria consensus material": {},
+					"gloria material":           {},
+				},
+			},
+		},
 	}
 
 	for _, test := range tests {
