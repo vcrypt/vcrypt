@@ -16,6 +16,7 @@ var (
 	twoPartyVault, twoPartySecret = buildVault(twoPartyPlan, twoPartyDriver)
 	diamondVault, diamondSecret   = buildVault(diamondPlan, diamondDriver)
 	dnsSecVault, dnsSecSecret     = buildVault(dnsSecPlan, dnsSecDriver)
+	acmeBankVault, acmeBankSecret = buildVault(acmeBankPlan, acmeBankDriver)
 
 	twoManDriver = test.Driver(map[string][]byte{
 		"op 1 secret": []byte("key #1"),
@@ -44,6 +45,8 @@ var (
 		test.Users["frank"].OpenPGPKey.KeyID:  mustOpenPGPKey(test.Users["frank"].OpenPGPKey.Private),
 		test.Users["gloria"].OpenPGPKey.KeyID: mustOpenPGPKey(test.Users["gloria"].OpenPGPKey.Private),
 	})
+
+	acmeBankDriver = test.Driver(map[string][]byte{})
 )
 
 func TestVault(t *testing.T) {
@@ -56,6 +59,7 @@ func TestVault(t *testing.T) {
 		{twoPartyVault, twoPartyDriver, twoPartySecret},
 		{diamondVault, diamondDriver, diamondSecret},
 		{dnsSecVault, dnsSecDriver, dnsSecSecret},
+		{acmeBankVault, acmeBankDriver, acmeBankSecret},
 	}
 
 	for _, test := range tests {

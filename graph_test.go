@@ -65,6 +65,45 @@ var (
 	//                                                         |
 	//                                                         -> [material]
 	dnsSecGraph = buildGraph(test.DNSSecConfig)
+
+	// [sss "master-key"] -> [rsa "president"] -> [ssh-key "alice@acme.bank"]
+	//                    |                    |
+	//                    |                    -> [material "alice material"]
+	//                    |
+	//                    -> [sss "vp quorum"] -> [*vote "bob:quorum"]
+	//                    |                    |
+	//                    |                    -> [*vote "claire:quorum"]
+	//                    |                    |
+	//                    |                    -> [*vote "david:quorum"]
+	//                    |
+	//                    -> [xor "vp consensus"] -> [*vote "bob:consenus"]
+	//                    |                       |
+	//                    |                       -> [*vote "claire:consensus"]
+	//                    |                       |
+	//                    |                       -> [*vote "david:consensus"]
+	//                    |
+	//                    -> [sss "so quorum"] -> [*vote "emily:quorum"]
+	//                    |                    |
+	//                    |                    -> [*vote "frank:quorum"]
+	//                    |                    |
+	//                    |                    -> [*vote "gloria:quorum"]
+	//                    |
+	//                    -> [xor "so consensus"] -> [*vote "emily:consenus"]
+	//                                            |
+	//                                            -> [*vote "frank:consensus"]
+	//                                            |
+	//                                            -> [*vote "gloria:consensus"]
+	//
+	//
+	// [*vote "<name>:quorum] : [secretbox "<name> quorum vote"] ------> [material "<name> quorum material"]
+	//                                                                |
+	//                                                                -> [demux "<name> votes"] -> [rsa "<name>"] -> [ssh-key "<name>@acme.bank"]
+	//                                                                |                                           |
+	//                                                                |                                           -> [material "<name> material"]
+	//                                                                |
+	// [*vote "<name>:conensus] : [secretbox "<name> consensus vote"] -> [material "<name> consensus material"]
+	//
+	acmeBankGraph = buildGraph(test.AcmeBankConfig)
 )
 
 func TestGraph(t *testing.T) {
@@ -137,6 +176,67 @@ func TestGraph(t *testing.T) {
 				test.Users["emily"].OpenPGPKey.KeyID,  // [material "emily@example.com"]
 				test.Users["frank"].OpenPGPKey.KeyID,  // [material "frank@example.com"]
 				test.Users["gloria"].OpenPGPKey.KeyID, // [material "gloria@example.com"]
+			},
+		},
+		{
+			Graph: acmeBankGraph,
+			nodes: []string{
+				"",       // [sss "master-key"]
+				"alice",  // [rsa "president"]
+				"",       // [ssh-key "alice@acme.bank"]
+				"",       // [sss "vp quorum"]
+				"",       // [sss "so quorum"]
+				"",       // [sss "vp consensus"]
+				"",       // [sss "so consensus"]
+				"",       // [secretbox "bob quorum vote"]
+				"",       // [secretbox "bob consensus vote"]
+				"",       // [demux "bob votes"]
+				"bob",    // [rsa "bob"]
+				"bob",    // [ssh-key "bob@acme.bank"]
+				"",       // [secretbox "claire quorum vote"]
+				"",       // [secretbox "claire consensus vote"]
+				"",       // [demux "claire votes"]
+				"claire", // [rsa "claire"]
+				"",       // [ssh-key "claire@acme.bank"]
+				"",       // [secretbox "david quorum vote"]
+				"",       // [secretbox "david consensus vote"]
+				"",       // [demux "david votes"]
+				"david",  // [rsa "david"]
+				"david",  // [ssh-key "david@acme.bank"]
+				"",       // [secretbox "emily quorum vote"]
+				"",       // [secretbox "emily consensus vote"]
+				"",       // [demux "emily votes"]
+				"emily",  // [rsa "emily"]
+				"",       // [ssh-key "emily@acme.bank"]
+				"",       // [secretbox "frank quorum vote"]
+				"",       // [secretbox "frank consensus vote"]
+				"",       // [demux "frank votes"]
+				"frank",  // [rsa "frank"]
+				"frank",  // [ssh-key "frank@acme.bank"]
+				"",       // [secretbox "gloria quorum vote"]
+				"",       // [secretbox "gloria consensus vote"]
+				"",       // [demux "gloria votes"]
+				"gloria", // [rsa "gloria"]
+				"",       // [ssh-key "gloria@acme.bank"]
+				"",       // [material "alice material"]
+				"",       // [material "bob quorum material"]
+				"",       // [material "bob consensus material"]
+				"",       // [material "bob material"]
+				"",       // [material "claire quorum material"]
+				"",       // [material "claire consensus material"]
+				"",       // [material "claire material"]
+				"",       // [material "david quorum material"]
+				"",       // [material "david consensus material"]
+				"",       // [material "david material"]
+				"",       // [material "emily quorum material"]
+				"",       // [material "emily consensus material"]
+				"",       // [material "emily material"]
+				"",       // [material "frank quorum material"]
+				"",       // [material "frank consensus material"]
+				"",       // [material "frank material"]
+				"",       // [material "gloria quorum material"]
+				"",       // [material "gloria consensus material"]
+				"",       // [material "gloria material"]
 			},
 		},
 	}
