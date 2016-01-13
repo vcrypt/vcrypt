@@ -406,16 +406,15 @@ func TestParser(t *testing.T) {
 				},
 				{
 					ID:   "master-key",
-					Type: "sss",
+					Type: "msp",
 					Values: map[string][]string{
-						"max-shares":      {"5"},
-						"required-shares": {"3"},
+						"predicate": {"((president & (vp-quorum | so-quorum)) | (vp-quorum & so-quorum) | vp-consensus | so-consensus)"},
 						"edge": {
 							"president",
-							"vp quorum",
-							"so quorum",
-							"vp consensus",
-							"so consensus",
+							"vp-quorum",
+							"so-quorum",
+							"vp-consensus",
+							"so-consensus",
 						},
 					},
 				},
@@ -438,7 +437,7 @@ func TestParser(t *testing.T) {
 					},
 				},
 				{
-					ID:   "vp quorum",
+					ID:   "vp-quorum",
 					Type: "sss",
 					Values: map[string][]string{
 						"max-shares":      {"3"},
@@ -451,7 +450,7 @@ func TestParser(t *testing.T) {
 					},
 				},
 				{
-					ID:   "so quorum",
+					ID:   "so-quorum",
 					Type: "sss",
 					Values: map[string][]string{
 						"max-shares":      {"3"},
@@ -464,7 +463,7 @@ func TestParser(t *testing.T) {
 					},
 				},
 				{
-					ID:   "vp consensus",
+					ID:   "vp-consensus",
 					Type: "xor",
 					Values: map[string][]string{
 						"edge": {
@@ -475,7 +474,7 @@ func TestParser(t *testing.T) {
 					},
 				},
 				{
-					ID:   "so consensus",
+					ID:   "so-consensus",
 					Type: "xor",
 					Values: map[string][]string{
 						"edge": {

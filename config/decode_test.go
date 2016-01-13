@@ -206,19 +206,20 @@ func TestUnmarshal(t *testing.T) {
 			plan: Plan{
 				Comment: "Acme Bank Master Key Recovery Plan",
 				Root:    "master-key",
-				SSSs: map[string]SSS{
+				MSPs: map[string]MSP{
 					"master-key": {
-						N: 5,
-						K: 3,
+						Predicate: "((president & (vp-quorum | so-quorum)) | (vp-quorum & so-quorum) | vp-consensus | so-consensus)",
 						EdgeSlice: []string{
 							"president",
-							"vp quorum",
-							"so quorum",
-							"vp consensus",
-							"so consensus",
+							"vp-quorum",
+							"so-quorum",
+							"vp-consensus",
+							"so-consensus",
 						},
 					},
-					"vp quorum": {
+				},
+				SSSs: map[string]SSS{
+					"vp-quorum": {
 						N: 3,
 						K: 2,
 						EdgeSlice: []string{
@@ -227,7 +228,7 @@ func TestUnmarshal(t *testing.T) {
 							"david quorum vote",
 						},
 					},
-					"so quorum": {
+					"so-quorum": {
 						N: 3,
 						K: 2,
 						EdgeSlice: []string{
@@ -238,14 +239,14 @@ func TestUnmarshal(t *testing.T) {
 					},
 				},
 				XORs: map[string]XOR{
-					"vp consensus": {
+					"vp-consensus": {
 						EdgeSlice: []string{
 							"bob consensus vote",
 							"claire consensus vote",
 							"david consensus vote",
 						},
 					},
-					"so consensus": {
+					"so-consensus": {
 						EdgeSlice: []string{
 							"emily consensus vote",
 							"frank consensus vote",

@@ -256,29 +256,29 @@ keyid = ` + Users["gloria"].OpenPGPKey.KeyID + `
 `)
 	// AcmeBankConfig is a nested SSS plan with ssh keys.
 	AcmeBankConfig = []byte(`
-# [sss "master-key"] -> [rsa "president"] -> [ssh-key "alice@acme.bank"]
+# [msp "master-key"] -> [rsa "president"] -> [ssh-key "alice@acme.bank"]
 #                    |                    |
 #                    |                    -> [material "alice material"]
 #                    |
-#                    -> [sss "vp quorum"] -> [*vote "bob:quorum"]
+#                    -> [sss "vp-quorum"] -> [*vote "bob:quorum"]
 #                    |                    |
 #                    |                    -> [*vote "claire:quorum"]
 #                    |                    |
 #                    |                    -> [*vote "david:quorum"]
 #                    |
-#                    -> [xor "vp consensus"] -> [*vote "bob:consenus"]
+#                    -> [xor "vp-consensus"] -> [*vote "bob:consenus"]
 #                    |                       |
 #                    |                       -> [*vote "claire:consensus"]
 #                    |                       |
 #                    |                       -> [*vote "david:consensus"]
 #                    |
-#                    -> [sss "so quorum"] -> [*vote "emily:quorum"]
+#                    -> [sss "so-quorum"] -> [*vote "emily:quorum"]
 #                    |                    |
 #                    |                    -> [*vote "frank:quorum"]
 #                    |                    |
 #                    |                    -> [*vote "gloria:quorum"]
 #                    |
-#                    -> [xor "so consensus"] -> [*vote "emily:consenus"]
+#                    -> [xor "so-consensus"] -> [*vote "emily:consenus"]
 #                                            |
 #                                            -> [*vote "frank:consensus"]
 #                                            |
@@ -297,14 +297,13 @@ keyid = ` + Users["gloria"].OpenPGPKey.KeyID + `
 comment = Acme Bank Master Key Recovery Plan
 root = master-key
 
-[sss "master-key"]
-max-shares = 5
-required-shares = 3
+[msp "master-key"]
+predicate = ((president & (vp-quorum | so-quorum)) | (vp-quorum & so-quorum) | vp-consensus | so-consensus)
 edge = president
-edge = vp quorum
-edge = so quorum
-edge = vp consensus
-edge = so consensus
+edge = vp-quorum
+edge = so-quorum
+edge = vp-consensus
+edge = so-consensus
 
 [rsa "president"]
 ssh-key = "` + Users["alice"].SSHKey.Public + `"
@@ -314,26 +313,26 @@ edge = alice material
 [ssh-key "alice@acme.bank"]
 fingerprint = ` + Users["alice"].SSHKey.Fingerprint + `
 
-[sss "vp quorum"]
+[sss "vp-quorum"]
 max-shares = 3
 required-shares = 2
 edge = bob quorum vote
 edge = claire quorum vote
 edge = david quorum vote
 
-[sss "so quorum"]
+[sss "so-quorum"]
 max-shares = 3
 required-shares = 2
 edge = emily quorum vote
 edge = frank quorum vote
 edge = gloria quorum vote
 
-[xor "vp consensus"]
+[xor "vp-consensus"]
 edge = bob consensus vote
 edge = claire consensus vote
 edge = david consensus vote
 
-[xor "so consensus"]
+[xor "so-consensus"]
 edge = emily consensus vote
 edge = frank consensus vote
 edge = gloria consensus vote
