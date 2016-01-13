@@ -2,14 +2,20 @@ package config
 
 import (
 	"bytes"
+	"crypto"
+	"crypto/rsa"
+	"crypto/sha256"
+	"crypto/x509"
 	"encoding/base64"
 	"encoding/pem"
 	"errors"
 	"strconv"
+	"strings"
 
 	"github.com/vcrypt/vcrypt/cryptex"
 	"github.com/vcrypt/vcrypt/secret"
 	"golang.org/x/crypto/openpgp"
+	"golang.org/x/crypto/ssh"
 )
 
 // Plan config
@@ -32,6 +38,7 @@ type Plan struct {
 	// Secret config
 	Passwords   map[string]Password   `vcrypt:"password,section"`
 	OpenPGPKeys map[string]OpenPGPKey `vcrypt:"openpgp-key,section"`
+	SSHKeys     map[string]SSHKey     `vcrypt:"ssh-key,section"`
 
 	// Material config
 	Materials map[string]Marker `vcrypt:"material,section"`
@@ -92,6 +99,9 @@ func (p Plan) SecretNode(name string) (SecretNode, bool) {
 		return n, true
 	}
 	if n, ok := p.OpenPGPKeys[name]; ok {
+		return n, true
+	}
+	if n, ok := p.SSHKeys[name]; ok {
 		return n, true
 	}
 
@@ -169,17 +179,46 @@ type RSA struct {
 	Comment   string   `vcrypt:"comment,optional"`
 	EdgeSlice []string `vcrypt:"edge,optional"`
 
-	PublicKey string `vcrypt:"publickey"`
+	PKIXKey string `vcrypt:"pkix-key,optional"`
+	SSHKey  string `vcrypt:"ssh-key,optional"`
 }
 
 // Cryptex for RSA
 func (n RSA) Cryptex() (cryptex.Cryptex, error) {
-	p, _ := pem.Decode([]byte(n.PublicKey))
-	if p == nil {
-		return nil, errors.New("invalid RSA public key, must be PEM encoded")
+	var (
+		pk      crypto.PublicKey
+		comment string
+		err     error
+	)
+
+	switch {
+	case n.PKIXKey != "":
+		p, _ := pem.Decode([]byte(n.PKIXKey))
+		if p == nil {
+			return nil, errors.New("invalid PKIX RSA key, must be PEM encoded")
+		}
+
+		if pk, err = x509.ParsePKIXPublicKey(p.Bytes); err != nil {
+			return nil, err
+		}
+	case n.SSHKey != "":
+		if pk, comment, err = parseAuthorizedKey(n.SSHKey); err != nil {
+			return nil, err
+		}
+	default:
+		return nil, errors.New("rsa cryptex requires either pkix-key or ssh-key")
 	}
 
-	return cryptex.NewRSA(p.Bytes, n.Comment), nil
+	b, err := x509.MarshalPKIXPublicKey(pk.(*rsa.PublicKey))
+	if err != nil {
+		return nil, err
+	}
+
+	if n.Comment != "" {
+		comment = n.Comment
+	}
+
+	return cryptex.NewRSA(b, comment), nil
 }
 
 // Edges for RSA
@@ -281,4 +320,38 @@ func (n OpenPGPKey) Secret() (secret.Secret, error) {
 	}
 
 	return secret.NewOpenPGPKey(keyIDs, n.Comment), nil
+}
+
+// SSKey config
+type SSHKey struct {
+	Comment string `vcrypt:"comment,optional"`
+
+	AuthorizedKey string `vcrypt:"authorized-key,optional"`
+	Fingerprint   string `vcrypt:"fingerprint,optional"`
+}
+
+// Secret for SSHKey
+func (n SSHKey) Secret() (secret.Secret, error) {
+	if n.Fingerprint != "" {
+		return secret.NewSSHKey(n.Fingerprint, n.Comment)
+	}
+
+	if n.AuthorizedKey == "" {
+		return nil, errors.New("ssh secret requires either authorized-key or fingerprint")
+	}
+
+	pk, comment, _, _, err := ssh.ParseAuthorizedKey([]byte(n.AuthorizedKey))
+	if err != nil {
+		return nil, err
+	}
+
+	if n.Comment != "" {
+		comment = n.Comment
+	}
+
+	sum := sha256.Sum256(pk.Marshal())
+	digest := base64.StdEncoding.EncodeToString(sum[:])
+	fingerprint := "SHA256:" + strings.TrimRight(digest, "=")
+
+	return secret.NewSSHKey(fingerprint, comment)
 }

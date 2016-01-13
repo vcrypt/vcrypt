@@ -15,7 +15,7 @@ import (
 //go:generate protoc material/material.proto
 //go:generate protoc payload/payload.proto payload/attached.proto payload/detached.proto
 //go:generate protoc seal/seal.proto seal/openpgp.proto
-//go:generate protoc secret/secret.proto secret/password.proto secret/openpgpkey.proto
+//go:generate protoc secret/secret.proto secret/password.proto secret/openpgpkey.proto secret/sshkey.proto
 //go:generate protoc vcrypt.proto marker.proto node.proto plan.proto vault.proto
 
 // Driver is an interface for an interactive vault processor.
