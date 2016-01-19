@@ -112,6 +112,10 @@ func unmarshalInto(section *section, rv reflect.Value, fields map[string]structF
 		et := subv.Type().Elem()
 		ev := reflect.New(et).Elem()
 
+		if cmnt := ev.FieldByName("Comment"); cmnt.IsValid() && section.ID != "" {
+			cmnt.SetString(section.ID)
+		}
+
 		if err := unmarshal(section, ev, getStructFieldsMap(et)); err != nil {
 			return err
 		}

@@ -52,7 +52,7 @@ func TestUnmarshal(t *testing.T) {
 					"bottom password": {"step 1 password"},
 				},
 				Materials: map[string]Marker{
-					"bottom material": {},
+					"bottom material": {"bottom material"},
 				},
 			},
 		},
@@ -63,6 +63,7 @@ func TestUnmarshal(t *testing.T) {
 				Root:    "master key",
 				SecretBoxes: map[string]SecretBox{
 					"master key": {
+						Comment:   "master key",
 						EdgeSlice: []string{"op 1 key", "op 2 key"},
 					},
 					"op 1 key": {
@@ -79,8 +80,8 @@ func TestUnmarshal(t *testing.T) {
 					"op 2 password": {"op 2 secret"},
 				},
 				Materials: map[string]Marker{
-					"op 1 material": {},
-					"op 2 material": {},
+					"op 1 material": {"op 1 material"},
+					"op 2 material": {"op 2 material"},
 				},
 			},
 		},
@@ -91,12 +92,15 @@ func TestUnmarshal(t *testing.T) {
 				Root:    "step 3",
 				SecretBoxes: map[string]SecretBox{
 					"step 3": {
+						Comment:   "step 3",
 						EdgeSlice: []string{"step 3 password", "step 2"},
 					},
 					"step 2": {
+						Comment:   "step 2",
 						EdgeSlice: []string{"step 2 password", "step 1"},
 					},
 					"step 1": {
+						Comment:   "step 1",
 						EdgeSlice: []string{"step 1 password", "material"},
 					},
 				},
@@ -117,8 +121,9 @@ func TestUnmarshal(t *testing.T) {
 				Root:    "five-of-seven",
 				SSSs: map[string]SSS{
 					"five-of-seven": {
-						N: 7,
-						K: 5,
+						Comment: "five-of-seven",
+						N:       7,
+						K:       5,
 						EdgeSlice: []string{
 							"alice@example.com",
 							"bob@example.com",
@@ -132,30 +137,37 @@ func TestUnmarshal(t *testing.T) {
 				},
 				OpenPGPs: map[string]OpenPGP{
 					"alice@example.com": {
+						Comment:    "alice@example.com",
 						PublicKeys: []string{test.Users["alice"].OpenPGPKey.Public},
 						EdgeSlice:  []string{"alice material", test.Users["alice"].OpenPGPKey.KeyID},
 					},
 					"bob@example.com": {
+						Comment:    "bob@example.com",
 						PublicKeys: []string{test.Users["bob"].OpenPGPKey.Public},
 						EdgeSlice:  []string{"bob material", test.Users["bob"].OpenPGPKey.KeyID},
 					},
 					"claire@example.com": {
+						Comment:    "claire@example.com",
 						PublicKeys: []string{test.Users["claire"].OpenPGPKey.Public},
 						EdgeSlice:  []string{"claire material", test.Users["claire"].OpenPGPKey.KeyID},
 					},
 					"david@example.com": {
+						Comment:    "david@example.com",
 						PublicKeys: []string{test.Users["david"].OpenPGPKey.Public},
 						EdgeSlice:  []string{"david material", test.Users["david"].OpenPGPKey.KeyID},
 					},
 					"emily@example.com": {
+						Comment:    "emily@example.com",
 						PublicKeys: []string{test.Users["emily"].OpenPGPKey.Public},
 						EdgeSlice:  []string{"emily material", test.Users["emily"].OpenPGPKey.KeyID},
 					},
 					"frank@example.com": {
+						Comment:    "frank@example.com",
 						PublicKeys: []string{test.Users["frank"].OpenPGPKey.Public},
 						EdgeSlice:  []string{"frank material", test.Users["frank"].OpenPGPKey.KeyID},
 					},
 					"gloria@example.com": {
+						Comment:    "gloria@example.com",
 						PublicKeys: []string{test.Users["gloria"].OpenPGPKey.Public},
 						EdgeSlice:  []string{"gloria material", test.Users["gloria"].OpenPGPKey.KeyID},
 					},
@@ -191,13 +203,13 @@ func TestUnmarshal(t *testing.T) {
 					},
 				},
 				Materials: map[string]Marker{
-					"alice material":  {},
-					"bob material":    {},
-					"claire material": {},
-					"david material":  {},
-					"emily material":  {},
-					"frank material":  {},
-					"gloria material": {},
+					"alice material":  {"alice material"},
+					"bob material":    {"bob material"},
+					"claire material": {"claire material"},
+					"david material":  {"david material"},
+					"emily material":  {"emily material"},
+					"frank material":  {"frank material"},
+					"gloria material": {"gloria material"},
 				},
 			},
 		},
@@ -208,6 +220,7 @@ func TestUnmarshal(t *testing.T) {
 				Root:    "master-key",
 				MSPs: map[string]MSP{
 					"master-key": {
+						Comment:   "master-key",
 						Predicate: "((president & (vp-quorum | so-quorum)) | (vp-quorum & so-quorum) | vp-consensus | so-consensus)",
 						EdgeSlice: []string{
 							"president",
@@ -220,8 +233,9 @@ func TestUnmarshal(t *testing.T) {
 				},
 				SSSs: map[string]SSS{
 					"vp-quorum": {
-						N: 3,
-						K: 2,
+						Comment: "vp-quorum",
+						N:       3,
+						K:       2,
 						EdgeSlice: []string{
 							"bob quorum vote",
 							"claire quorum vote",
@@ -229,8 +243,9 @@ func TestUnmarshal(t *testing.T) {
 						},
 					},
 					"so-quorum": {
-						N: 3,
-						K: 2,
+						Comment: "so-quorum",
+						N:       3,
+						K:       2,
 						EdgeSlice: []string{
 							"emily quorum vote",
 							"frank quorum vote",
@@ -240,6 +255,7 @@ func TestUnmarshal(t *testing.T) {
 				},
 				XORs: map[string]XOR{
 					"vp-consensus": {
+						Comment: "vp-consensus",
 						EdgeSlice: []string{
 							"bob consensus vote",
 							"claire consensus vote",
@@ -247,6 +263,7 @@ func TestUnmarshal(t *testing.T) {
 						},
 					},
 					"so-consensus": {
+						Comment: "so-consensus",
 						EdgeSlice: []string{
 							"emily consensus vote",
 							"frank consensus vote",
@@ -256,72 +273,84 @@ func TestUnmarshal(t *testing.T) {
 				},
 				SecretBoxes: map[string]SecretBox{
 					"bob quorum vote": {
+						Comment: "bob quorum vote",
 						EdgeSlice: []string{
 							"bob votes",
 							"bob quorum material",
 						},
 					},
 					"bob consensus vote": {
+						Comment: "bob consensus vote",
 						EdgeSlice: []string{
 							"bob votes",
 							"bob consensus material",
 						},
 					},
 					"claire quorum vote": {
+						Comment: "claire quorum vote",
 						EdgeSlice: []string{
 							"claire votes",
 							"claire quorum material",
 						},
 					},
 					"claire consensus vote": {
+						Comment: "claire consensus vote",
 						EdgeSlice: []string{
 							"claire votes",
 							"claire consensus material",
 						},
 					},
 					"david quorum vote": {
+						Comment: "david quorum vote",
 						EdgeSlice: []string{
 							"david votes",
 							"david quorum material",
 						},
 					},
 					"david consensus vote": {
+						Comment: "david consensus vote",
 						EdgeSlice: []string{
 							"david votes",
 							"david consensus material",
 						},
 					},
 					"emily quorum vote": {
+						Comment: "emily quorum vote",
 						EdgeSlice: []string{
 							"emily votes",
 							"emily quorum material",
 						},
 					},
 					"emily consensus vote": {
+						Comment: "emily consensus vote",
 						EdgeSlice: []string{
 							"emily votes",
 							"emily consensus material",
 						},
 					},
 					"frank quorum vote": {
+						Comment: "frank quorum vote",
 						EdgeSlice: []string{
 							"frank votes",
 							"frank quorum material",
 						},
 					},
 					"frank consensus vote": {
+						Comment: "frank consensus vote",
 						EdgeSlice: []string{
 							"frank votes",
 							"frank consensus material",
 						},
 					},
 					"gloria quorum vote": {
+						Comment: "gloria quorum vote",
 						EdgeSlice: []string{
 							"gloria votes",
 							"gloria quorum material",
 						},
 					},
 					"gloria consensus vote": {
+						Comment: "gloria consensus vote",
 						EdgeSlice: []string{
 							"gloria votes",
 							"gloria consensus material",
@@ -330,31 +359,37 @@ func TestUnmarshal(t *testing.T) {
 				},
 				Demuxes: map[string]Demux{
 					"bob votes": {
+						Comment: "bob votes",
 						EdgeSlice: []string{
 							"bob",
 						},
 					},
 					"claire votes": {
+						Comment: "claire votes",
 						EdgeSlice: []string{
 							"claire",
 						},
 					},
 					"david votes": {
+						Comment: "david votes",
 						EdgeSlice: []string{
 							"david",
 						},
 					},
 					"emily votes": {
+						Comment: "emily votes",
 						EdgeSlice: []string{
 							"emily",
 						},
 					},
 					"frank votes": {
+						Comment: "frank votes",
 						EdgeSlice: []string{
 							"frank",
 						},
 					},
 					"gloria votes": {
+						Comment: "gloria votes",
 						EdgeSlice: []string{
 							"gloria",
 						},
@@ -362,49 +397,56 @@ func TestUnmarshal(t *testing.T) {
 				},
 				RSAs: map[string]RSA{
 					"president": {
-						SSHKey: test.Users["alice"].SSHKey.Public,
+						Comment: "president",
+						SSHKey:  test.Users["alice"].SSHKey.Public,
 						EdgeSlice: []string{
 							"alice@acme.bank",
 							"alice material",
 						},
 					},
 					"bob": {
-						SSHKey: test.Users["bob"].SSHKey.Public,
+						Comment: "bob",
+						SSHKey:  test.Users["bob"].SSHKey.Public,
 						EdgeSlice: []string{
 							"bob@acme.bank",
 							"bob material",
 						},
 					},
 					"claire": {
-						SSHKey: test.Users["claire"].SSHKey.Public,
+						Comment: "claire",
+						SSHKey:  test.Users["claire"].SSHKey.Public,
 						EdgeSlice: []string{
 							"claire@acme.bank",
 							"claire material",
 						},
 					},
 					"david": {
-						SSHKey: test.Users["david"].SSHKey.Public,
+						Comment: "david",
+						SSHKey:  test.Users["david"].SSHKey.Public,
 						EdgeSlice: []string{
 							"david@acme.bank",
 							"david material",
 						},
 					},
 					"emily": {
-						SSHKey: test.Users["emily"].SSHKey.Public,
+						Comment: "emily",
+						SSHKey:  test.Users["emily"].SSHKey.Public,
 						EdgeSlice: []string{
 							"emily@acme.bank",
 							"emily material",
 						},
 					},
 					"frank": {
-						SSHKey: test.Users["frank"].SSHKey.Public,
+						Comment: "frank",
+						SSHKey:  test.Users["frank"].SSHKey.Public,
 						EdgeSlice: []string{
 							"frank@acme.bank",
 							"frank material",
 						},
 					},
 					"gloria": {
-						SSHKey: test.Users["gloria"].SSHKey.Public,
+						Comment: "gloria",
+						SSHKey:  test.Users["gloria"].SSHKey.Public,
 						EdgeSlice: []string{
 							"gloria@acme.bank",
 							"gloria material",
@@ -413,47 +455,54 @@ func TestUnmarshal(t *testing.T) {
 				},
 				SSHKeys: map[string]SSHKey{
 					"alice@acme.bank": {
+						Comment:     "alice@acme.bank",
 						Fingerprint: test.Users["alice"].SSHKey.Fingerprint,
 					},
 					"bob@acme.bank": {
+						Comment:       "bob@acme.bank",
 						AuthorizedKey: test.Users["bob"].SSHKey.Public,
 					},
 					"claire@acme.bank": {
+						Comment:     "claire@acme.bank",
 						Fingerprint: test.Users["claire"].SSHKey.Fingerprint,
 					},
 					"david@acme.bank": {
+						Comment:       "david@acme.bank",
 						AuthorizedKey: test.Users["david"].SSHKey.Public,
 					},
 					"emily@acme.bank": {
+						Comment:     "emily@acme.bank",
 						Fingerprint: test.Users["emily"].SSHKey.Fingerprint,
 					},
 					"frank@acme.bank": {
+						Comment:       "frank@acme.bank",
 						AuthorizedKey: test.Users["frank"].SSHKey.Public,
 					},
 					"gloria@acme.bank": {
+						Comment:     "gloria@acme.bank",
 						Fingerprint: test.Users["gloria"].SSHKey.Fingerprint,
 					},
 				},
 				Materials: map[string]Marker{
-					"alice material":            {},
-					"bob quorum material":       {},
-					"bob consensus material":    {},
-					"bob material":              {},
-					"claire quorum material":    {},
-					"claire consensus material": {},
-					"claire material":           {},
-					"david quorum material":     {},
-					"david consensus material":  {},
-					"david material":            {},
-					"emily quorum material":     {},
-					"emily consensus material":  {},
-					"emily material":            {},
-					"frank quorum material":     {},
-					"frank consensus material":  {},
-					"frank material":            {},
-					"gloria quorum material":    {},
-					"gloria consensus material": {},
-					"gloria material":           {},
+					"alice material":            {"alice material"},
+					"bob quorum material":       {"bob quorum material"},
+					"bob consensus material":    {"bob consensus material"},
+					"bob material":              {"bob material"},
+					"claire quorum material":    {"claire quorum material"},
+					"claire consensus material": {"claire consensus material"},
+					"claire material":           {"claire material"},
+					"david quorum material":     {"david quorum material"},
+					"david consensus material":  {"david consensus material"},
+					"david material":            {"david material"},
+					"emily quorum material":     {"emily quorum material"},
+					"emily consensus material":  {"emily consensus material"},
+					"emily material":            {"emily material"},
+					"frank quorum material":     {"frank quorum material"},
+					"frank consensus material":  {"frank consensus material"},
+					"frank material":            {"frank material"},
+					"gloria quorum material":    {"gloria quorum material"},
+					"gloria consensus material": {"gloria consensus material"},
+					"gloria material":           {"gloria material"},
 				},
 			},
 		},
