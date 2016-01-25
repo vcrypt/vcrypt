@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/vcrypt/vcrypt"
+	"github.com/vcrypt/vcrypt/cli/graph"
 	"github.com/vcrypt/vcrypt/cryptex"
 	"github.com/vcrypt/vcrypt/material"
 	"github.com/vcrypt/vcrypt/secret"
@@ -93,27 +94,15 @@ func inspectPlan(plan *vcrypt.Plan) {
 		fmt.Println()
 	}
 
-	err = plan.BFS(func(node *vcrypt.Node) error {
-		id, err := node.Digest()
-		if err != nil {
-			return err
-		}
+	graphLines, err := graph.PlanLines(plan)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err.Error())
+		os.Exit(1)
+	}
+	for _, line := range graphLines {
+		fmt.Println(line)
+	}
 
-		cmnt, err := node.Comment()
-		if err != nil {
-			return err
-		}
-		cmnt = strings.Replace(cmnt, "\n", "\t\t\n", 0)
-
-		typ, err := nodeTypeName(node)
-		if err != nil {
-			return err
-		}
-		typ = "[" + typ + "]"
-
-		fmt.Printf("%x %-12s %s\n", id[:8], typ, cmnt)
-		return nil
-	})
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
