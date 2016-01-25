@@ -13,7 +13,7 @@ RootSection <- SpaceComment* ValueLine+
 
 Section <- Space* '[' Space* <Identifier> { p.addSection(text) }
            (Space+ '"' <QuotedIdentifier> { p.setID(text) } '"')?
-           Space* ']' SpaceComment (ValueLine/ValueMultiLine)*
+           Space* ']' SpaceComment? (ValueLine/ValueMultiLine)*
 
 ValueLine <- Space* <Identifier> { p.setKey(text) }
              Space* '=' Space* <Value> { p.addValue(text) }
