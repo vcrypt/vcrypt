@@ -94,7 +94,7 @@ func inspectPlan(plan *vcrypt.Plan) {
 		fmt.Println()
 	}
 
-	graphLines, err := graph.PlanLines(plan)
+	graphLines, err := graph.PlanLines(plan, nil)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
@@ -130,12 +130,16 @@ func inspectVault(vault *vcrypt.Vault) {
 		os.Exit(1)
 	}
 
-	fmt.Printf("Plan: %x\n", fid)
+	fmt.Printf("plan %x\n", fid)
 
 	if cmnt := vault.Plan.Comment(); len(cmnt) > 0 {
 		fmt.Println()
 		fmt.Printf("\t%s\n", strings.Replace(cmnt, "\n", "\t\n", 0))
 		fmt.Println()
+	}
+
+	graphConfig := &graph.Config{
+		NodeMarkers: make(map[string]rune),
 	}
 
 	db := &DB{
@@ -149,33 +153,29 @@ func inspectVault(vault *vcrypt.Vault) {
 			return err
 		}
 
-		stat := ""
 		mtrl, err := db.LoadMaterial(id)
 		if err != nil {
 			return err
 		}
+
 		if mtrl != nil {
-			stat = "S"
+			graphConfig.NodeMarkers[string(id)] = 'S'
 		}
-
-		cmnt, err := node.Comment()
-		if err != nil {
-			return err
-		}
-		cmnt = strings.Replace(cmnt, "\n", "\t\t\n", 0)
-
-		typ, err := nodeTypeName(node)
-		if err != nil {
-			return err
-		}
-		typ = "[" + typ + "]"
-
-		fmt.Printf("%1s %x %-12s %s\n", stat, id[:8], typ, cmnt)
 		return nil
 	})
+
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
+	}
+
+	graphLines, err := graph.PlanLines(vault.Plan, graphConfig)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err.Error())
+		os.Exit(1)
+	}
+	for _, line := range graphLines {
+		fmt.Println(line)
 	}
 }
 
