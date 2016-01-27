@@ -339,7 +339,7 @@ func TestPlanLines(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		lines, err := PlanLines(plan)
+		lines, err := PlanLines(plan, nil)
 		if err != nil {
 			t.Error(err)
 			continue

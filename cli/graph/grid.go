@@ -75,11 +75,12 @@ func (r runeCell) String() string {
 }
 
 type nodeCell struct {
-	node *vcrypt.Node
+	node   *vcrypt.Node
+	marker rune
 }
 
 func (n *nodeCell) String() string {
-	return `*`
+	return string(n.marker)
 }
 
 func (n *nodeCell) detail() (string, error) {

@@ -6,8 +6,19 @@ import (
 	"github.com/vcrypt/vcrypt"
 )
 
+// A Config structure is used to configure the display of graph lines for a
+// Plan.
+type Config struct {
+	NodeMarkers map[string]rune
+}
+
 // PlanLines is a textual representation of the plan graph.
-func PlanLines(plan *vcrypt.Plan) ([]string, error) {
+func PlanLines(plan *vcrypt.Plan, config *Config) ([]string, error) {
+	nodeMarkers := map[string]rune{}
+	if config != nil && config.NodeMarkers != nil {
+		nodeMarkers = config.NodeMarkers
+	}
+
 	rootID, err := plan.Nodes[0].Digest()
 	if err != nil {
 		return nil, err
@@ -24,8 +35,18 @@ func PlanLines(plan *vcrypt.Plan) ([]string, error) {
 			return err
 		}
 
+		marker := '*'
+		if m, ok := nodeMarkers[string(id)]; ok {
+			marker = m
+		}
+
+		cell := &nodeCell{
+			node:   node,
+			marker: marker,
+		}
+
 		tbl = append(tbl, g.formatInboundEdgeRows(id)...)
-		tbl = append(tbl, g.formatTargetRows(id, &nodeCell{node}, len(node.Inputs))...)
+		tbl = append(tbl, g.formatTargetRows(id, cell, len(node.Inputs))...)
 
 		edges := make([][]byte, 0, len(node.Inputs))
 		for i := len(node.Inputs); i > 0; i-- {
