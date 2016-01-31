@@ -9,10 +9,8 @@ import (
 	"strings"
 
 	"github.com/vcrypt/vcrypt"
-	"github.com/vcrypt/vcrypt/cli/graph"
-	"github.com/vcrypt/vcrypt/cryptex"
+	"github.com/vcrypt/vcrypt/cli"
 	"github.com/vcrypt/vcrypt/material"
-	"github.com/vcrypt/vcrypt/secret"
 )
 
 var (
@@ -94,7 +92,7 @@ func inspectPlan(plan *vcrypt.Plan) {
 		fmt.Println()
 	}
 
-	graphLines, err := graph.PlanLines(plan, nil)
+	graphLines, err := cli.PlanGraph(plan)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
@@ -138,92 +136,17 @@ func inspectVault(vault *vcrypt.Vault) {
 		fmt.Println()
 	}
 
-	graphConfig := &graph.Config{
-		NodeMarkers: make(map[string]rune),
-	}
-
 	db := &DB{
 		vault:   vault,
 		baseDir: *inspectVars.dbDir,
 	}
 
-	err = vault.Plan.BFS(func(node *vcrypt.Node) error {
-		id, err := node.Digest()
-		if err != nil {
-			return err
-		}
-
-		mtrl, err := db.LoadMaterial(id)
-		if err != nil {
-			return err
-		}
-
-		if mtrl != nil {
-			graphConfig.NodeMarkers[string(id)] = 'S'
-		}
-		return nil
-	})
-
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err.Error())
-		os.Exit(1)
-	}
-
-	graphLines, err := graph.PlanLines(vault.Plan, graphConfig)
+	graphLines, err := cli.VaultGraph(vault, db)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err.Error())
 		os.Exit(1)
 	}
 	for _, line := range graphLines {
 		fmt.Println(line)
-	}
-}
-
-func nodeTypeName(node *vcrypt.Node) (string, error) {
-	switch node.Type() {
-	case vcrypt.MarkerNode:
-		return "material", nil
-	case vcrypt.SecretNode:
-		sec, err := node.Secret()
-		if err != nil {
-			return "", err
-		}
-
-		switch sec.(type) {
-		case *secret.OpenPGPKey:
-			return "openpgpkey", nil
-		case *secret.Password:
-			return "password", nil
-		default:
-			return "secret", nil
-		}
-	case vcrypt.CryptexNode:
-		cptx, err := node.Cryptex()
-		if err != nil {
-			return "", err
-		}
-
-		switch cptx.(type) {
-		case *cryptex.Box:
-			return "box", nil
-		case *cryptex.Demux:
-			return "demux", nil
-		case *cryptex.Mux:
-			return "mux", nil
-		case *cryptex.OpenPGP:
-			return "openpgp", nil
-		case *cryptex.RSA:
-			return "rsa", nil
-		case *cryptex.SecretBox:
-			return "secretbox", nil
-		case *cryptex.SSS:
-			return "sss", nil
-		case *cryptex.XOR:
-			return "xor", nil
-		default:
-			return "cryptex", nil
-		}
-	default:
-		return "unknown", nil
 	}
 }

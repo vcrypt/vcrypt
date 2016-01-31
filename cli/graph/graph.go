@@ -1,93 +1,72 @@
 package graph
 
-import (
-	"bytes"
+import "bytes"
 
-	"github.com/vcrypt/vcrypt"
-)
-
-// A Config structure is used to configure the display of graph lines for a
-// Plan.
-type Config struct {
-	NodeMarkers map[string]rune
-}
-
-// PlanLines is a textual representation of the plan graph.
-func PlanLines(plan *vcrypt.Plan, config *Config) ([]string, error) {
-	nodeMarkers := map[string]rune{}
-	if config != nil && config.NodeMarkers != nil {
-		nodeMarkers = config.NodeMarkers
-	}
-
-	rootID, err := plan.Nodes[0].Digest()
-	if err != nil {
-		return nil, err
+// Lines is a textual multi-line representation of the node graph.
+func Lines(nodes []*Node) ([]string, error) {
+	if len(nodes) == 0 {
+		return []string{}, nil
 	}
 
 	g := &graph{
-		rootID, // initial state
+		slots: [][]byte{nodes[0].ID},
+		nodes: nodes,
 	}
 
-	tbl := table{}
-	walker := func(node *vcrypt.Node) error {
-		id, err := node.Digest()
-		if err != nil {
-			return err
-		}
-
-		marker := '*'
-		if m, ok := nodeMarkers[string(id)]; ok {
-			marker = m
-		}
-
-		cell := &nodeCell{
-			node:   node,
-			marker: marker,
-		}
-
-		tbl = append(tbl, g.formatInboundEdgeRows(id)...)
-		tbl = append(tbl, g.formatTargetRows(id, cell, len(node.Inputs))...)
-
-		edges := make([][]byte, 0, len(node.Inputs))
-		for i := len(node.Inputs); i > 0; i-- {
-			edges = append(edges, node.Inputs[i-1])
-		}
-		tbl = append(tbl, g.formatOutboundEdgeRows(id, edges)...)
-
-		return nil
-	}
-
-	if err := plan.BFS(walker); err != nil {
-		return nil, err
-	}
-	return tbl.lines()
+	return g.table().lines()
 }
 
-type graph [][]byte
+// Node is a node (vertex) of a graph.
+type Node struct {
+	ID     []byte
+	Edges  [][]byte
+	Marker rune
+	Detail string
+}
 
-func (g *graph) formatInboundEdgeRows(id []byte) []row {
+// String returns a string representation of the node.
+func (n *Node) String() string {
+	return string(n.Marker)
+}
+
+type graph struct {
+	slots [][]byte
+	nodes []*Node
+}
+
+func (g *graph) table() table {
+	tbl := table{}
+	for _, node := range g.nodes {
+		tbl = append(tbl, g.formatInboundEdgeRows(node)...)
+		tbl = append(tbl, g.formatTargetRows(node)...)
+		tbl = append(tbl, g.formatOutboundEdgeRows(node)...)
+	}
+	return tbl
+}
+
+func (g *graph) formatInboundEdgeRows(node *Node) []row {
 	rows := []row{}
 	for {
 		switch {
-		case g.nonAdjacent(id):
+		case g.nonAdjacent(node.ID):
 			// | |_|/   | |_|_|/   | |_|_|_|/   | | |_|_|/ /
 			// |/| |    |/| | |    |/| | | |    | |/| | | |
 
-			idx, idxOther := g.contract(id)
+			idx, idxOther := g.contract(node.ID)
 			rows = append(rows, g.lateralRow(idx, idxOther))
 			rows = append(rows, g.contractionRow(idx, false))
 
-		case g.nearlyAdjacent(id):
+		case g.nearlyAdjacent(node.ID):
 			// | |/   | | |/   | | |/ /
 			// |/|    | |/|    | |/| /
 
-			idx, _ := g.contract(id)
+			idx, _ := g.contract(node.ID)
 			rows = append(rows, g.contractionRow(idx+1, true))
 			rows = append(rows, g.doubleContractionRow(idx))
-		case g.adjacent(id):
+		case g.adjacent(node.ID):
 			// |/   | |/   | |/ /
 
-			idx, _ := g.contract(id)
+			idx, _ := g.contract(node.ID)
 			rows = append(rows, g.contractionRow(idx, true))
 		default:
 			return rows
@@ -95,13 +74,13 @@ func (g *graph) formatInboundEdgeRows(id []byte) []row {
 	}
 }
 
-func (g graph) nonAdjacent(id []byte) bool {
-	if len(g) < 3 {
+func (g *graph) nonAdjacent(id []byte) bool {
+	if len(g.slots) < 3 {
 		return false
 	}
 
-	for i, idX := range g[:len(g)-3] {
-		for _, idY := range g[i+3:] {
+	for i, idX := range g.slots[:len(g.slots)-3] {
+		for _, idY := range g.slots[i+3:] {
 			if equal(id, idX, idY) {
 				return true
 			}
@@ -111,13 +90,13 @@ func (g graph) nonAdjacent(id []byte) bool {
 	return false
 }
 
-func (g graph) nearlyAdjacent(id []byte) bool {
-	if len(g) <= 2 {
+func (g *graph) nearlyAdjacent(id []byte) bool {
+	if len(g.slots) <= 2 {
 		return false
 	}
 
-	idX := g[0]
-	for _, idY := range g[2:] {
+	idX := g.slots[0]
+	for _, idY := range g.slots[2:] {
 		if equal(id, idX, idY) {
 			return true
 		}
@@ -128,13 +107,13 @@ func (g graph) nearlyAdjacent(id []byte) bool {
 	return false
 }
 
-func (g graph) adjacent(id []byte) bool {
-	if len(g) <= 1 {
+func (g *graph) adjacent(id []byte) bool {
+	if len(g.slots) <= 1 {
 		return false
 	}
 
-	idX := g[0]
-	for _, idY := range g[1:] {
+	idX := g.slots[0]
+	for _, idY := range g.slots[1:] {
 		if equal(id, idX, idY) {
 			return true
 		}
@@ -145,18 +124,18 @@ func (g graph) adjacent(id []byte) bool {
 	return false
 }
 
-func (g graph) contractionRow(idx int, shiftLeft bool) row {
+func (g *graph) contractionRow(idx int, shiftLeft bool) row {
 	r := row{}
-	for i := range g {
+	for i := range g.slots {
 		switch {
 		case i < idx:
-			r = append(r, vertEdge, spacer)
+			r.cells = append(r.cells, vertEdge, spacer)
 		case i == idx:
-			r = append(r, vertEdge, conEdge)
+			r.cells = append(r.cells, vertEdge, conEdge)
 		case shiftLeft:
-			r = append(r, spacer, conEdge)
+			r.cells = append(r.cells, spacer, conEdge)
 		default:
-			r = append(r, vertEdge, spacer)
+			r.cells = append(r.cells, vertEdge, spacer)
 		}
 	}
 	return r
@@ -164,16 +143,16 @@ func (g graph) contractionRow(idx int, shiftLeft bool) row {
 
 func (g graph) lateralRow(idxTo, idxFrom int) row {
 	r := row{}
-	for i := range g {
+	for i := range g.slots {
 		switch {
 		case i <= idxTo:
-			r = append(r, vertEdge, spacer)
+			r.cells = append(r.cells, vertEdge, spacer)
 		case i == idxFrom-1:
-			r = append(r, vertEdge, conEdge)
+			r.cells = append(r.cells, vertEdge, conEdge)
 		case i < idxFrom:
-			r = append(r, vertEdge, latEdge)
+			r.cells = append(r.cells, vertEdge, latEdge)
 		default:
-			r = append(r, spacer, conEdge)
+			r.cells = append(r.cells, spacer, conEdge)
 		}
 	}
 	return r
@@ -181,16 +160,16 @@ func (g graph) lateralRow(idxTo, idxFrom int) row {
 
 func (g graph) doubleContractionRow(idx int) row {
 	r := row{}
-	for i := range g {
+	for i := range g.slots {
 		switch {
 		case i < idx:
-			r = append(r, vertEdge, spacer)
+			r.cells = append(r.cells, vertEdge, spacer)
 		case i == idx:
-			r = append(r, vertEdge, conEdge)
+			r.cells = append(r.cells, vertEdge, conEdge)
 		case i == idx+1:
-			r = append(r, vertEdge, spacer)
+			r.cells = append(r.cells, vertEdge, spacer)
 		default:
-			r = append(r, conEdge, spacer)
+			r.cells = append(r.cells, conEdge, spacer)
 		}
 	}
 	return r
@@ -198,7 +177,7 @@ func (g graph) doubleContractionRow(idx int) row {
 
 func (g *graph) contract(id []byte) (idxTo, idxFrom int) {
 	idxTo = -1
-	for i, v := range *g {
+	for i, v := range g.slots {
 		if equal(id, v) {
 			if idxTo == -1 {
 				idxTo = i
@@ -207,19 +186,19 @@ func (g *graph) contract(id []byte) (idxTo, idxFrom int) {
 		}
 	}
 
-	if idxFrom < len(*g)-1 {
-		for i, v := range (*g)[idxFrom+1:] {
-			(*g)[i-1] = v
+	if idxFrom < len(g.slots)-1 {
+		for i, v := range g.slots[idxFrom+1:] {
+			g.slots[i-1] = v
 		}
 	}
 
-	*g = (*g)[:len(*g)-1]
+	g.slots = g.slots[:len(g.slots)-1]
 	return
 }
 
-func (g *graph) formatTargetRows(id []byte, target cell, edgeCount int) []row {
-	idx, rows := g.index(id), []row{}
-	if edgeCount > 2 && idx != len(*g)-1 {
+func (g *graph) formatTargetRows(node *Node) []row {
+	idx, rows := g.index(node.ID), []row{}
+	if len(node.Edges) > 2 && idx != len(g.slots)-1 {
 		//           | | \
 		//           | |  \
 		//  | \      | |   \
@@ -227,52 +206,54 @@ func (g *graph) formatTargetRows(id []byte, target cell, edgeCount int) []row {
 		//  *-. \    | *---. \
 
 		rows = append(rows, g.halfShiftRow(idx))
-		for i := 0; i < edgeCount-2; i++ {
+		for i := 0; i < len(node.Edges)-2; i++ {
 			rows = append(rows, g.shiftRow(idx, i))
 		}
 	}
 
 	//  *        | * \        | *-. \
-	rows = append(rows, g.targetRow(idx, target, edgeCount))
+	rows = append(rows, g.targetRow(idx, node))
 	return rows
 }
 
-func (g graph) halfShiftRow(idx int) row {
+func (g *graph) halfShiftRow(idx int) row {
 	r := row{}
-	for i := range g {
+	for i := range g.slots {
 		switch {
 		case i > idx+1:
-			r = append(r, expEdge, spacer)
+			r.cells = append(r.cells, expEdge, spacer)
 		default:
-			r = append(r, vertEdge, spacer)
+			r.cells = append(r.cells, vertEdge, spacer)
 		}
 	}
 	return r
 }
 
-func (g graph) targetRow(idx int, target cell, edgeCount int) row {
-	r := row{}
-	for i := range g {
+func (g *graph) targetRow(idx int, node *Node) row {
+	r := row{
+		detail: node.Detail,
+	}
+	for i := range g.slots {
 		switch {
 		case i < idx:
-			r = append(r, vertEdge, spacer)
+			r.cells = append(r.cells, vertEdge, spacer)
 		case i == idx:
-			if edgeCount < 3 {
-				r = append(r, target, spacer)
+			if len(node.Edges) < 3 {
+				r.cells = append(r.cells, node, spacer)
 				continue
 			}
 
-			r = append(r, target, horizEdge)
-			for i := 0; i < edgeCount-3; i++ {
-				r = append(r, horizEdge, horizEdge)
+			r.cells = append(r.cells, node, horizEdge)
+			for i := 0; i < len(node.Edges)-3; i++ {
+				r.cells = append(r.cells, horizEdge, horizEdge)
 			}
-			r = append(r, cornerEdge, spacer)
-		case i == idx+1 && edgeCount < 3:
-			r = append(r, vertEdge, spacer)
-		case edgeCount < 2:
-			r = append(r, vertEdge, spacer)
+			r.cells = append(r.cells, cornerEdge, spacer)
+		case i == idx+1 && len(node.Edges) < 3:
+			r.cells = append(r.cells, vertEdge, spacer)
+		case len(node.Edges) < 2:
+			r.cells = append(r.cells, vertEdge, spacer)
 		default:
-			r = append(r, expEdge, spacer)
+			r.cells = append(r.cells, expEdge, spacer)
 		}
 	}
 	return r
@@ -280,31 +261,31 @@ func (g graph) targetRow(idx int, target cell, edgeCount int) row {
 
 func (g graph) shiftRow(idx int, spaces int) row {
 	r := row{}
-	for i := range g {
+	for i := range g.slots {
 		switch {
 		case i < idx:
-			r = append(r, vertEdge, spacer)
+			r.cells = append(r.cells, vertEdge, spacer)
 		case i == idx:
-			r = append(r, vertEdge, spacer)
+			r.cells = append(r.cells, vertEdge, spacer)
 			for i := 0; i < spaces; i++ {
-				r = append(r, spacer)
+				r.cells = append(r.cells, spacer)
 			}
 		default:
-			r = append(r, spacer, expEdge)
+			r.cells = append(r.cells, spacer, expEdge)
 		}
 	}
 	return r
 }
 
-func (g *graph) formatOutboundEdgeRows(id []byte, edges [][]byte) []row {
-	idx, rows := g.index(id), []row{}
-	g.expand(idx, edges)
+func (g *graph) formatOutboundEdgeRows(node *Node) []row {
+	idx, rows := g.index(node.ID), []row{}
+	g.expand(idx, node.Edges)
 
-	switch len(edges) {
+	switch len(node.Edges) {
 	case 0: // sink
 		// *   * |   | * |
 		//      /    |  /
-		if len(*g) > idx {
+		if len(g.slots) > idx {
 			rows = append(rows, g.sinkRow(idx))
 		}
 	case 1:
@@ -312,19 +293,19 @@ func (g *graph) formatOutboundEdgeRows(id []byte, edges [][]byte) []row {
 		// *    *-.    *-. \    *---.    | *---. \
 		// |\   |\ \   |\ \ \   |\ \ \   | |\ \ \ \
 
-		rows = append(rows, g.expansionRow(idx, len(edges)))
+		rows = append(rows, g.expansionRow(idx, len(node.Edges)))
 	}
 	return rows
 }
 
 func (g graph) sinkRow(idx int) row {
 	r := row{}
-	for i := range g {
+	for i := range g.slots {
 		switch {
 		case i < idx:
-			r = append(r, vertEdge, spacer)
+			r.cells = append(r.cells, vertEdge, spacer)
 		default:
-			r = append(r, spacer, conEdge)
+			r.cells = append(r.cells, spacer, conEdge)
 		}
 	}
 	return r
@@ -332,37 +313,39 @@ func (g graph) sinkRow(idx int) row {
 
 func (g graph) expansionRow(idx, edgeCount int) row {
 	r := row{}
-	for i := range g {
+	for i := range g.slots {
 		switch {
 		case i < idx:
-			r = append(r, vertEdge, spacer)
+			r.cells = append(r.cells, vertEdge, spacer)
 		case i == idx:
-			r = append(r, vertEdge, expEdge)
-		case i != len(g)-1:
-			r = append(r, spacer, expEdge)
+			r.cells = append(r.cells, vertEdge, expEdge)
+		case i != len(g.slots)-1:
+			r.cells = append(r.cells, spacer, expEdge)
 		}
 	}
 	return r
 }
 
 func (g *graph) expand(idx int, edges [][]byte) {
-	gg := graph{}
+	slots := [][]byte{}
 
 	if idx > 0 {
-		gg = append(gg, (*g)[:idx]...)
+		slots = append(slots, g.slots[:idx]...)
 	}
 
-	gg = append(gg, edges...)
-
-	if i := idx + 1; i < len(*g) {
-		gg = append(gg, (*g)[i:]...)
+	for i := len(edges) - 1; i >= 0; i-- {
+		slots = append(slots, edges[i])
 	}
 
-	*g = gg
+	if i := idx + 1; i < len(g.slots) {
+		slots = append(slots, g.slots[i:]...)
+	}
+
+	g.slots = slots
 }
 
-func (g graph) index(id []byte) int {
-	for i, v := range g {
+func (g *graph) index(id []byte) int {
+	for i, v := range g.slots {
 		if equal(id, v) {
 			return i
 		}
