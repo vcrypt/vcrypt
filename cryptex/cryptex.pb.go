@@ -15,6 +15,7 @@
 		cryptex/openpgp.proto
 		cryptex/mux.proto
 		cryptex/demux.proto
+		cryptex/msp.proto
 
 	It has these top-level messages:
 		Envelope
@@ -40,6 +41,7 @@ type Envelope struct {
 	OpenPGP   *OpenPGP   `protobuf:"bytes,6,opt,name=openpgp" json:"openpgp,omitempty"`
 	Mux       *Mux       `protobuf:"bytes,7,opt,name=mux" json:"mux,omitempty"`
 	Demux     *Demux     `protobuf:"bytes,8,opt,name=demux" json:"demux,omitempty"`
+	MSP       *MSP       `protobuf:"bytes,9,opt,name=msp" json:"msp,omitempty"`
 }
 
 func (m *Envelope) Reset()         { *m = Envelope{} }
@@ -98,6 +100,13 @@ func (m *Envelope) GetMux() *Mux {
 func (m *Envelope) GetDemux() *Demux {
 	if m != nil {
 		return m.Demux
+	}
+	return nil
+}
+
+func (m *Envelope) GetMSP() *MSP {
+	if m != nil {
+		return m.MSP
 	}
 	return nil
 }
@@ -197,6 +206,16 @@ func (m *Envelope) MarshalTo(data []byte) (int, error) {
 		}
 		i += n8
 	}
+	if m.MSP != nil {
+		data[i] = 0x4a
+		i++
+		i = encodeVarintCryptex(data, i, uint64(m.MSP.Size()))
+		n9, err := m.MSP.MarshalTo(data[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n9
+	}
 	return i, nil
 }
 
@@ -262,6 +281,10 @@ func (m *Envelope) Size() (n int) {
 		l = m.Demux.Size()
 		n += 1 + l + sovCryptex(uint64(l))
 	}
+	if m.MSP != nil {
+		l = m.MSP.Size()
+		n += 1 + l + sovCryptex(uint64(l))
+	}
 	return n
 }
 
@@ -303,6 +326,9 @@ func (this *Envelope) GetValue() interface{} {
 	if this.Demux != nil {
 		return this.Demux
 	}
+	if this.MSP != nil {
+		return this.MSP
+	}
 	return nil
 }
 
@@ -324,6 +350,8 @@ func (this *Envelope) SetValue(value interface{}) bool {
 		this.Mux = vt
 	case *Demux:
 		this.Demux = vt
+	case *MSP:
+		this.MSP = vt
 	default:
 		return false
 	}
@@ -585,6 +613,36 @@ func (m *Envelope) Unmarshal(data []byte) error {
 				m.Demux = &Demux{}
 			}
 			if err := m.Demux.Unmarshal(data[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 9:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MSP", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := data[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			postIndex := iNdEx + msglen
+			if msglen < 0 {
+				return ErrInvalidLengthCryptex
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.MSP == nil {
+				m.MSP = &MSP{}
+			}
+			if err := m.MSP.Unmarshal(data[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex

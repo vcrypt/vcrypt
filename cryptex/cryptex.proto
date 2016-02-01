@@ -17,6 +17,7 @@ import "cryptex/rsa.proto";
 import "cryptex/openpgp.proto";
 import "cryptex/mux.proto";
 import "cryptex/demux.proto";
+import "cryptex/msp.proto";
 
 message Envelope {
   option (gogoproto.onlyone) = true;
@@ -30,5 +31,6 @@ message Envelope {
     cryptex.OpenPGP openpgp = 6 [(gogoproto.customname) = "OpenPGP"];
     cryptex.Mux mux = 7;
     cryptex.Demux demux = 8;
+    cryptex.MSP msp = 9 [(gogoproto.customname) = "MSP"];
   }
 }

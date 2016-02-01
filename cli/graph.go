@@ -147,6 +147,8 @@ func nodeTypeName(node *vcrypt.Node) (string, error) {
 			return "sss", nil
 		case *cryptex.XOR:
 			return "xor", nil
+		case *cryptex.MSP:
+			return "msp", nil
 		default:
 			return "cryptex", nil
 		}

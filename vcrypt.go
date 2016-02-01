@@ -11,7 +11,7 @@ import (
 )
 
 //go:generate -command protoc protoc --proto_path=$GOPATH/src:$GOPATH/src/github.com/gogo/protobuf/protobuf:. --gogo_out=.
-//go:generate protoc cryptex/cryptex.proto cryptex/sss.proto cryptex/xor.proto cryptex/secretbox.proto cryptex/box.proto cryptex/rsa.proto cryptex/openpgp.proto cryptex/mux.proto cryptex/demux.proto
+//go:generate protoc cryptex/cryptex.proto cryptex/sss.proto cryptex/xor.proto cryptex/secretbox.proto cryptex/box.proto cryptex/rsa.proto cryptex/openpgp.proto cryptex/mux.proto cryptex/demux.proto cryptex/msp.proto
 //go:generate protoc material/material.proto
 //go:generate protoc payload/payload.proto payload/attached.proto payload/detached.proto
 //go:generate protoc seal/seal.proto seal/openpgp.proto

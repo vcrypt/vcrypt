@@ -70,25 +70,25 @@ var (
 	//                    |                    |
 	//                    |                    -> [material "alice material"]
 	//                    |
-	//                    -> [sss "vp quorum"] -> [*vote "bob:quorum"]
+	//                    -> [sss "vp-quorum"] -> [*vote "bob:quorum"]
 	//                    |                    |
 	//                    |                    -> [*vote "claire:quorum"]
 	//                    |                    |
 	//                    |                    -> [*vote "david:quorum"]
 	//                    |
-	//                    -> [xor "vp consensus"] -> [*vote "bob:consenus"]
+	//                    -> [xor "vp-consensus"] -> [*vote "bob:consenus"]
 	//                    |                       |
 	//                    |                       -> [*vote "claire:consensus"]
 	//                    |                       |
 	//                    |                       -> [*vote "david:consensus"]
 	//                    |
-	//                    -> [sss "so quorum"] -> [*vote "emily:quorum"]
+	//                    -> [sss "so-quorum"] -> [*vote "emily:quorum"]
 	//                    |                    |
 	//                    |                    -> [*vote "frank:quorum"]
 	//                    |                    |
 	//                    |                    -> [*vote "gloria:quorum"]
 	//                    |
-	//                    -> [xor "so consensus"] -> [*vote "emily:consenus"]
+	//                    -> [xor "so-consensus"] -> [*vote "emily:consenus"]
 	//                                            |
 	//                                            -> [*vote "frank:consensus"]
 	//                                            |
@@ -184,10 +184,10 @@ func TestGraph(t *testing.T) {
 				"master-key",                // [sss "master-key"]
 				"president",                 // [rsa "president"]
 				"alice@acme.bank",           // [ssh-key "alice@acme.bank"]
-				"vp quorum",                 // [sss "vp quorum"]
-				"so quorum",                 // [sss "so quorum"]
-				"vp consensus",              // [sss "vp consensus"]
-				"so consensus",              // [sss "so consensus"]
+				"vp-quorum",                 // [sss "vp-quorum"]
+				"so-quorum",                 // [sss "so-quorum"]
+				"vp-consensus",              // [sss "vp-consensus"]
+				"so-consensus",              // [sss "so-consensus"]
 				"bob quorum vote",           // [secretbox "bob quorum vote"]
 				"bob consensus vote",        // [secretbox "bob consensus vote"]
 				"bob votes",                 // [demux "bob votes"]
